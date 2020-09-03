@@ -1,0 +1,104 @@
+[Root]
+Most Recent Package=Paquete de instalación estándar 1
+
+
+[Package|Paquete de instalación estándar 1|Root]
+SubWizProgID=PDWizard.SetupPkgSubWiz
+BuildFolder=C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\Paquete
+
+[Package|Paquete de instalación estándar 1|Configure DAO ISAMs]
+Applicable=No
+
+[Package|Paquete de instalación estándar 1|Configure DAO ODBC]
+JetWorkspace=
+ODBCDirect=
+
+[Package|Paquete de instalación estándar 1|Files Found]
+
+[Package|Paquete de instalación estándar 1|Files Released]
+InkObj.dll=
+
+[Package|Paquete de instalación estándar 1|Missing Dependency Information]
+
+[Package|Paquete de instalación estándar 1|Out-of-Date Dependency Information]
+C:\Windows\System32\Msstdfmt.dll=
+C:\Windows\System32\mscomct2.ocx=
+
+[Package|Paquete de instalación estándar 1|Files Added]
+
+[Package|Paquete de instalación estándar 1|Files Removed]
+
+[Package|Paquete de instalación estándar 1|Files In Project]
+C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\TFHKA_Demo_Inf.exe=Yes
+C:\Windows\System32\msvbvm60.dll=Yes
+C:\Windows\System32\oleaut32.dll=Yes
+C:\Windows\System32\olepro32.dll=Yes
+C:\Windows\System32\asycfilt.dll=Yes
+C:\Windows\System32\stdole2.tlb=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=Yes
+C:\Windows\System32\vb6es.dll=Yes
+C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\tfhkaif.dll=Yes
+C:\Windows\System32\mscomct2.ocx=Yes
+C:\Windows\System32\MSCC2ES.DLL=Yes
+C:\Windows\System32\Msstdfmt.dll=Yes
+C:\Windows\System32\STDFTES.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=Yes
+C:\Windows\System32\VB6STKIT.DLL=Yes
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=Yes
+
+[Package|Paquete de instalación estándar 1|Configure Registry Files]
+Applicable=No
+
+[Package|Paquete de instalación estándar 1|Configure Remote Servers]
+Applicable=No
+
+[Package|Paquete de instalación estándar 1|Install Locations]
+C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\TFHKA_Demo_Inf.exe=$(AppPath)
+C:\Windows\System32\msvbvm60.dll=$(WinSysPathSysFile)
+C:\Windows\System32\oleaut32.dll=$(WinSysPathSysFile)
+C:\Windows\System32\olepro32.dll=$(WinSysPathSysFile)
+C:\Windows\System32\asycfilt.dll=$(WinSysPathSysFile)
+C:\Windows\System32\stdole2.tlb=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\Redist\COMCAT.DLL=$(WinSysPathSysFile)
+C:\Windows\System32\vb6es.dll=$(WinSysPath)
+C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\tfhkaif.dll=$(AppPath)
+C:\Windows\System32\mscomct2.ocx=$(WinSysPath)
+C:\Windows\System32\MSCC2ES.DLL=$(WinSysPath)
+C:\Windows\System32\Msstdfmt.dll=$(WinSysPath)
+C:\Windows\System32\STDFTES.DLL=$(WinSysPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP.EXE=$(AppPath)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\SETUP1.EXE=$(WinPath)
+C:\Windows\System32\VB6STKIT.DLL=$(WinSysPathSysFile)
+C:\Program Files\Microsoft Visual Studio\VB98\Wizards\PDWizard\ST6UNST.EXE=$(WinPath)
+
+[Package|Paquete de instalación estándar 1|Configure Shared Files]
+Applicable=Yes
+C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\TFHKA_Demo_Inf.exe=Yes
+C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\tfhkaif.dll=Yes
+
+[Package|Paquete de instalación estándar 1|Distribution]
+Type=single
+Size=
+Title=TFHKA_ComandosGenerales
+
+[Package|Paquete de instalación estándar 1|IconGroups]
+Group0=TFHKA_ComandosGenerales
+PrivateGroup0=Verdadero
+Parent0=$(Programs)
+
+[Package|Paquete de instalación estándar 1|TFHKA_ComandosGenerales]
+Icon1=TFHKA_Demo_Inf.exe
+Title1=TFHKA_ComandosGenerales
+StartIn1=$(AppPath)
+Key1=Icon1
+
+[Package|Paquete de instalación estándar 1|Package]
+PackageFolder=C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\Paquete
+ProjectFolder=C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0
+ServerSideCab=
+File1=C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\Paquete\setup.exe
+File2=C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\Paquete\Setup.Lst
+File3=C:\Manuel\IF421\5_Soporte\TFHKA_Int_Bixolon\Externa\TFHKA_Imp_Integradores\TFHKA Demo Informativo V 1.0\Paquete\TFHKA_Demo_Inf.CAB
+Handler1=PDWizard.FolderDplySubWiz
+Handler2=PDWizard.WebPostDplySubWiz

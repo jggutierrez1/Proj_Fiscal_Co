@@ -1,0 +1,37 @@
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\bin\Debug\Demo VB Net.exe
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\bin\Debug\Demo VB Net.pdb
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\bin\Debug\Demo VB Net.xml
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo_VB_Net.Form1.resources
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo_VB_Net.Resources.resources
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.exe
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.xml
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.pdb
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.exe
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.xml
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.pdb
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\bin\Debug\Demo VB Net.exe
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\bin\Debug\Demo VB Net.pdb
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\bin\Debug\Demo VB Net.xml
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo_VB_Net.Form1.resources
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\Demo_VB_Net.Resources.resources
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.exe
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.xml
+C:\Dany\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.pdb
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.exe
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.xml
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo VB Net.pdb
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\ResolveAssemblyReference.cache
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo_VB_Net.Form1.resources
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\Demo_VB_Net.Resources.resources
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\GenerateResource.read.1.tlog
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\obj\x86\Debug\GenerateResource.write.1.tlog
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\bin\Debug\Demo VB Net.exe
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\bin\Debug\Demo VB Net.pdb
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\bin\Debug\Demo VB Net.xml
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\VB Net\Demo VB Net\bin\Debug\TFHKADIR.dll

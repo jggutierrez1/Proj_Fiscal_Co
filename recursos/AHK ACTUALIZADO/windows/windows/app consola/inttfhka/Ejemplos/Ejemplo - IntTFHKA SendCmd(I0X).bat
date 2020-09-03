@@ -1,0 +1,1 @@
+c:\IntTFHKA\IntTFHKA SendCmd(I0X)

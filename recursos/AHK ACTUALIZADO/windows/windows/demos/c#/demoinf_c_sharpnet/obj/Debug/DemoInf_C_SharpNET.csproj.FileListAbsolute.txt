@@ -1,0 +1,33 @@
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.exe
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.pdb
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.exe
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.pdb
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Form1.resources
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Properties.Resources.resources
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.csproj.GenerateResource.Cache
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Conexion.resources
+C:\Users\Dany\Desktop\Demos Panama\C# 1.1\DemoInf_C_SharpNET\bin\Debug\TFHKADIR.dll
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.exe
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.pdb
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\ResolveAssemblyReference.cache
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Form1.resources
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Properties.Resources.resources
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\ResGen.read.1.tlog
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\ResGen.write.1.tlog
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.exe
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.pdb
+C:\Dany\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\bin\Debug\TFHKADIR.dll
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.exe
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.pdb
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\ResolveAssemblyReference.cache
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Form1.resources
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Properties.Resources.resources
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\ResGen.read.1.tlog
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\obj\Debug\ResGen.write.1.tlog
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.exe
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.pdb
+C:\Dany\The Factory\The Factory (Panama)\Integracion\Demos\C#\DemoInf_C_SharpNET\bin\Debug\TFHKADIR.dll
+D:\Git_Projects\Proj_Fiscal_Co\recursos\AHK ACTUALIZADO\windows\windows\demos\c#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.csprojResolveAssemblyReference.cache
+D:\Git_Projects\Proj_Fiscal_Co\recursos\AHK ACTUALIZADO\windows\windows\demos\c#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.exe
+D:\Git_Projects\Proj_Fiscal_Co\recursos\AHK ACTUALIZADO\windows\windows\demos\c#\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.pdb

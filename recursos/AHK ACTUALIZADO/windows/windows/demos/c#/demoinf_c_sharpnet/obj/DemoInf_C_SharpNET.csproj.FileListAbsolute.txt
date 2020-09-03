@@ -1,0 +1,10 @@
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.exe
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.pdb
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.exe
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\bin\Debug\DemoInf_C_SharpNET.pdb
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\ResolveAssemblyReference.cache
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Form1.resources
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.Properties.Resources.resources
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.csproj.GenerateResource.Cache
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores_Windows_V2.4\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.exe
+C:\Users\susanita\Desktop\Doc Leydi\TFHKA_Imp_Integradores_Windows_V2.4\TFHKA_DemoInf_C_SharpNET\DemoInf_C_SharpNET\obj\Debug\DemoInf_C_SharpNET.pdb

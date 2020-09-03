@@ -1,0 +1,11 @@
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\bin\Release\Demo VB Net.exe
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\bin\Release\Demo VB Net.pdb
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\bin\Release\Demo VB Net.xml
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\ResolveAssemblyReference.cache
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\Demo_VB_Net.Form1.resources
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\Demo_VB_Net.Resources.resources
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\GenerateResource.read.1.tlog
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\GenerateResource.write.1.tlog
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\Demo VB Net.exe
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\Demo VB Net.xml
+C:\Users\Dany\Desktop\Demo VB Net\Demo VB Net\obj\x86\Release\Demo VB Net.pdb
