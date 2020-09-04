@@ -1,7 +1,7 @@
 object fSinco_Main: TfSinco_Main
   Left = 0
   Top = 0
-  Caption = 'SINCOSOFT - M'#243'dulo de impresion fiscal (M.I.F.) V. 1.0'
+  Caption = 'SINCOSOFT - M'#243'dulo de impresi'#243'n fiscal (M.I.F.) V. 1.0'
   ClientHeight = 464
   ClientWidth = 774
   Color = clBtnFace
@@ -2556,8 +2556,10 @@ object fSinco_Main: TfSinco_Main
       end
     end
     object oTab_Sett_01: TTabSheet
-      Caption = 'Opciones'
+      Caption = 'Opciones de configuraci'#243'n'
       ImageIndex = 3
+      ExplicitLeft = 8
+      ExplicitTop = 22
       object oMComment3: TMemo
         Left = 384
         Top = 103
@@ -2576,19 +2578,19 @@ object fSinco_Main: TfSinco_Main
       end
       object Panel1: TPanel
         Left = 3
-        Top = 0
+        Top = -2
         Width = 350
         Height = 254
         TabOrder = 2
         object Label35: TLabel
-          Left = 42
+          Left = 46
           Top = 36
           Width = 42
           Height = 13
           Caption = 'Puerto  :'
         end
         object Label37: TLabel
-          Left = -1
+          Left = 3
           Top = 77
           Width = 85
           Height = 13
@@ -2765,10 +2767,10 @@ object fSinco_Main: TfSinco_Main
         end
         object oBtn_Status: TBitBtn
           Left = 98
-          Top = 201
+          Top = 203
           Width = 153
           Height = 41
-          Caption = 'Verificar Status'
+          Caption = 'Verificar Estatus'
           Enabled = False
           Glyph.Data = {
             36100000424D3610000000000000360000002800000020000000200000000100
@@ -3003,9 +3005,9 @@ object fSinco_Main: TfSinco_Main
         object Label2: TLabel
           Left = 11
           Top = 38
-          Width = 109
+          Width = 105
           Height = 13
-          Caption = 'Buscar Facturas Cada:'
+          Caption = 'Buscar facturas cada:'
         end
         object Label3: TLabel
           Left = 179
@@ -3015,18 +3017,18 @@ object fSinco_Main: TfSinco_Main
           Caption = 'Seg.'
         end
         object Label9: TLabel
-          Left = 12
-          Top = 81
+          Left = 17
+          Top = 78
           Width = 103
           Height = 13
-          Caption = 'Verificar Status cada:'
+          Caption = 'Verificar etatus cada:'
         end
         object Label10: TLabel
           Left = 19
           Top = 108
           Width = 96
           Height = 13
-          Caption = 'Verificar Error cada:'
+          Caption = 'Verificar error cada:'
         end
         object Label11: TLabel
           Left = 37
@@ -3101,7 +3103,7 @@ object fSinco_Main: TfSinco_Main
           Top = 169
           Width = 103
           Height = 13
-          Caption = 'Verificar Status cada:'
+          Caption = 'Verificar etatus cada:'
         end
         object Label20: TLabel
           Left = 187
@@ -3129,7 +3131,7 @@ object fSinco_Main: TfSinco_Main
           Top = 196
           Width = 96
           Height = 13
-          Caption = 'Verificar Error cada:'
+          Caption = 'Verificar error cada:'
         end
         object Label24: TLabel
           Left = 187
@@ -3281,28 +3283,43 @@ object fSinco_Main: TfSinco_Main
       end
     end
     object oTab_Sett_02: TTabSheet
-      Caption = 'Pruebas de Autenticasion'
+      Caption = 'Par'#225'metros de configuraci'#243'n del servidor'
       ImageIndex = 4
+      ExplicitLeft = 8
+      ExplicitTop = 22
       object Label6: TLabel
         Left = 380
         Top = 16
-        Width = 75
+        Width = 74
         Height = 13
-        Caption = 'Servidor Datos:'
+        Caption = 'Servidor datos:'
       end
       object Label1: TLabel
         Left = 380
         Top = 43
         Width = 71
         Height = 13
-        Caption = 'Cod. Empresa:'
+        Caption = 'Cod. empresa:'
       end
       object Label4: TLabel
         Left = 380
         Top = 70
-        Width = 70
+        Width = 69
         Height = 13
-        Caption = 'Cod. Sucursal:'
+        Caption = 'Cod. sucursal:'
+      end
+      object Label30: TLabel
+        Left = 16
+        Top = 158
+        Width = 326
+        Height = 33
+        Caption = 'USO TECNICO SOLAMENTE'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -27
+        Font.Name = 'Tahoma'
+        Font.Style = []
+        ParentFont = False
       end
       object PageControl2: TPageControl
         Left = 0
@@ -3353,7 +3370,7 @@ object fSinco_Main: TfSinco_Main
         Top = 103
         Width = 153
         Height = 41
-        Caption = 'Solicitar Data'
+        Caption = 'Solicitar datos'
         Glyph.Data = {
           36100000424D3610000000000000360000002800000020000000200000000100
           2000000000000010000000000000000000000000000000000000000000000000
@@ -3501,7 +3518,7 @@ object fSinco_Main: TfSinco_Main
         Top = 150
         Width = 153
         Height = 41
-        Caption = 'Enviar Datos'
+        Caption = 'Enviar datos'
         Glyph.Data = {
           36100000424D3610000000000000360000002800000020000000200000000100
           2000000000000010000000000000000000000000000000000000000000000000
@@ -3666,7 +3683,7 @@ object fSinco_Main: TfSinco_Main
         Top = 71
         Width = 217
         Height = 17
-        Caption = 'Cargar Json Pruebas [data_test.json]'
+        Caption = 'Cargar Json pruebas [data_test.json]'
         TabOrder = 7
         OnClick = oCk_Test_ModeClick
       end
@@ -3690,9 +3707,9 @@ object fSinco_Main: TfSinco_Main
       object Label28: TLabel
         Left = 194
         Top = 72
-        Width = 119
+        Width = 118
         Height = 17
-        Caption = 'Tipo de Documento:'
+        Caption = 'Tipo de documento:'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -13
@@ -3732,17 +3749,17 @@ object fSinco_Main: TfSinco_Main
         Top = 148
         Width = 766
         Height = 269
-        ActivePage = TabSheet6
+        ActivePage = TabSheet3
         Align = alBottom
         TabOrder = 1
         object TabSheet3: TTabSheet
-          Caption = 'Por Rango de Fecha'
+          Caption = 'Por rango de fecha'
           object Label7: TLabel
             Left = 223
             Top = 58
-            Width = 40
+            Width = 73
             Height = 17
-            Caption = 'Desde:'
+            Caption = 'Fecha desde'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -3753,9 +3770,9 @@ object fSinco_Main: TfSinco_Main
           object Label8: TLabel
             Left = 423
             Top = 58
-            Width = 33
+            Width = 68
             Height = 17
-            Caption = 'Hasta'
+            Caption = 'Fecha hasta'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -3804,7 +3821,7 @@ object fSinco_Main: TfSinco_Main
             Top = 146
             Width = 153
             Height = 65
-            Caption = 'Solicitar e Imprimir'
+            Caption = 'Solicitar e imprimir'
             TabOrder = 2
             OnClick = orBtn_Doit_RFecClick
             PngImage.Data = {
@@ -3822,14 +3839,16 @@ object fSinco_Main: TfSinco_Main
           end
         end
         object TabSheet6: TTabSheet
-          Caption = 'Por Rango de Correlatvo'
+          Caption = 'Por rango de correlativo'
           ImageIndex = 1
+          ExplicitLeft = 0
+          ExplicitTop = 26
           object Label27: TLabel
             Left = 224
             Top = 58
-            Width = 40
+            Width = 64
             Height = 17
-            Caption = 'Desde:'
+            Caption = 'NCF desde'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -3840,9 +3859,9 @@ object fSinco_Main: TfSinco_Main
           object Label29: TLabel
             Left = 424
             Top = 58
-            Width = 33
+            Width = 59
             Height = 17
-            Caption = 'Hasta'
+            Caption = 'NCF hasta'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -13
@@ -3867,7 +3886,7 @@ object fSinco_Main: TfSinco_Main
             Top = 146
             Width = 153
             Height = 65
-            Caption = 'Solicitar e Imprimir'
+            Caption = 'Solicitar e imprimir'
             TabOrder = 0
             OnClick = orBtn_Doit_RDocClick
             PngImage.Data = {

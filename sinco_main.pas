@@ -212,6 +212,7 @@ type
     oTm_Wait_For_End_Trans: TTimer;
     oWait_Image: TImage;
     oBtn_manual: TPngBitBtn;
+    Label30: TLabel;
     procedure TrayIcon1DblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure oBtn_Probar_CnnClick(Sender: TObject);
@@ -265,7 +266,7 @@ type
     { Private declarations }
     cSerial_Working: string;
     cJsonUpdate: Widestring;
-    bSendOk: boolean;
+    bSendOk: integer;
     bStop_Flg: boolean;
     bTm_work: boolean;
     bTest_Mode: boolean;
@@ -466,7 +467,7 @@ begin
       end;
       oPrn_lists := nil;
       oFact_cabs := nil;
-      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON.LOG');
+      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO (CABECERA) [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
       result := -1;
       EXIT;
     end;
@@ -644,7 +645,7 @@ begin
       end;
       oPrn_lists := nil;
       oFact_dets := nil;
-      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON.LOG');
+      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO (DETALLE) [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
       result := -1;
       EXIT;
     end;
@@ -698,11 +699,12 @@ begin
     self.RESTRequest3.Params.Clear;
     // self.RESTRequest3.Params.AddItem('body', trim(self.cJsonUpdate), TRESTRequestParameterKind.pkREQUESTBODY, [poDoNotEncode], TRESTContentType.ctAPPLICATION_JSON);
     self.RESTRequest3.Params.AddItem('', TRIM(self.cJsonUpdate), TRESTRequestParameterKind.pkREQUESTBODY, [poDoNotEncode], TRESTContentType.ctAPPLICATION_JSON);
-    utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\JSON.LOG');
+    utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\JSON_SEND.LOG');
 
     self.RESTRequest3.Execute;
     jValue := self.RESTResponse3.JsonValue;
     self.oHttp_Result2.Text := jValue.ToString;
+    utiles.LogToFile(TRIM(self.oHttp_Result2.Text), ExtractFilePath(application.ExeName) + '\JSON_SEND.LOG');
     self.oHttp_Result2.Refresh;
     oResponse := SO(self.oHttp_Result2.Text);
     iCodigo := oResponse.O['codigo'].AsInteger;
@@ -710,17 +712,17 @@ begin
     if (iCodigo = 100) then
     begin
       self.oBtn_Sol_Data.Enabled := True;
-      self.bSendOk := True;
+      self.bSendOk := 1;
     end
     else
     begin
       messagedlg(cDetall, mtInformation, [mbOK], 0);
-      self.bSendOk := false;
+      self.bSendOk := 2;
     end;
   except
     begin
       utiles.LogToFile('POST-DATA: ' + IntToStr(RESTResponse3.StatusCode) + ':' + RESTResponse3.StatusText, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
-      self.bSendOk := false;
+      self.bSendOk := -1;
     end;
   end;
   oResponse := NIL;
@@ -843,6 +845,7 @@ var
   cUrlBase: string;
   cparEmpr: string;
   cParSucu: string;
+  cValues: string;
 begin
   FMessage := '';
   self.Clear_Objects();
@@ -867,10 +870,9 @@ begin
   end;
 
   self.oHttp_Result2.Text := cJsonResult;
-
-  if (TRIM(cJsonResult) <> '{"print_list":{"fact_cabs":[],"fact_dets":{}}}') then
+  if not((TRIM(cJsonResult) = '{"print_list":{"fact_cabs":[],"fact_dets":{}}}') or (TRIM(cJsonResult) = '{"print_list":[]}')) then
   begin
-    utiles.LogToFile(cJsonResult, ExtractFilePath(application.ExeName) + '\JSON.LOG');
+    utiles.LogToFile(cJsonResult, ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
   end;
 
   self.oHttp_Result2.Refresh;
@@ -906,6 +908,7 @@ end;
 procedure TfSinco_Main.orBtn_Doit_RDocClick(Sender: TObject);
 begin
   // REIMPRESION POR RANGO DE CORRELATIVOS
+  self.orBtn_Doit_RDoc.Enabled := false;
   self.iShoiceAct := 6;
   self.oTm_Wait_For_End_Trans.Enabled := True;
   // self.Reimprime_Por_Rango;
@@ -974,6 +977,7 @@ end;
 
 procedure TfSinco_Main.orBtn_Doit_RFecClick(Sender: TObject);
 begin
+  self.orBtn_Doit_RFec.Enabled := false;
   // REIMPRESION POR RANGO DE FECHA
   self.iShoiceAct := 7;
   self.oTm_Wait_For_End_Trans.Enabled := True;
@@ -1240,9 +1244,10 @@ begin
           self.Cambiar_Indic_Espera('OFF');
           self.oTimeCheck.Enabled := false;
           self.oTm_Wait_For_End_Trans.Enabled := false;
+          self.iShoiceAct := 0;
 
           self.Reimprime_Por_Rango;
-          self.iShoiceAct := 0;
+          self.orBtn_Doit_RDoc.Enabled := true;
         end
         else
           self.Cambiar_Indic_Espera('ON');
@@ -1255,9 +1260,10 @@ begin
           self.Cambiar_Indic_Espera('OFF');
           self.oTimeCheck.Enabled := false;
           self.oTm_Wait_For_End_Trans.Enabled := false;
+          self.iShoiceAct := 0;
 
           self.Reimprime_Por_Fecha;
-          self.iShoiceAct := 0;
+          self.orBtn_Doit_RFec.Enabled := true;
         end
         else
           self.Cambiar_Indic_Espera('ON');
@@ -1299,7 +1305,7 @@ begin
   self.bIgnore_Fis := false;
   self.bTest_Mode := false;
   self.bStop_Flg := false;
-  self.bSendOk := false;
+  self.bSendOk := 0;
   self.bTm_work := false;
   self.cJsonUpdate := '';
   { Load the tray icons. }
@@ -1592,7 +1598,7 @@ begin
   self.olStatus_Error.Caption := 'HUBO UN ERROR AL TRATAR DE RECUPERAR LO DATOS:...';
   self.olStatus_Error.Color := $000000B3;
   self.olStatus_Error.Refresh;
-  utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\JSON.LOG');
+  utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\HTTP_GET_ERROR.LOG');
 end;
 
 procedure TfSinco_Main.RESTRequest3HTTPProtocolError(Sender: TCustomRESTRequest);
@@ -1600,7 +1606,7 @@ begin
   self.olStatus_Error.Caption := 'HUBO UN ERROR AL TRATAR DE REALIZAR EL ENVIO:...';
   self.olStatus_Error.Color := $000000B3;
   self.olStatus_Error.Refresh;
-  utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\JSON.LOG');
+  utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\HTTP_SEND_ERROR.LOG');
 end;
 
 procedure TfSinco_Main.SalirdeMFF1Click(Sender: TObject);
@@ -1975,13 +1981,13 @@ begin
   begin
     ShowMessage('SE DETECTO UN ERROR EN AL DESCRIPCION DE LOS PRODUCTOS DEL DOCUMENTO.' + #13 + 'SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL.');
     self.cJsonUpdate := '';
-    self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Empresa) + '",';
-    self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Sucursal) + '",';
-    self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
+    self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
+    self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+    self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
-    self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
+    self.cJsonUpdate := self.cJsonUpdate + '"op_id":0,';
     self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_status_det":"ERROR DE CABECERA DE FACTURA",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
@@ -2008,7 +2014,7 @@ begin
   while NOT(self.oMem_Fac.Eof) do
   Begin
     self.verifica_stop();
-    self.bSendOk := false;
+    self.bSendOk := 0;
     cOp_id := self.oMem_Fac.FieldByName('op_id').AsString;
 
     self.olStatus_Doc.Caption := 'IMPRIMIENDO CLIENTE:[' + self.oMem_Fac.FieldByName('op_nom_cliente').AsString + '], DOCUMENTO:[' + self.oMem_Fac.FieldByName('op_num_corre')
@@ -2020,9 +2026,9 @@ begin
       ShowMessage('SE DETECTO UN ERROR EN AL DESCRIPCION DE LOS PRODUCTOS DEL DOCUMENTO.' + #13 +
         'SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL.');
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Empresa) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Sucursal) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(self.oMem_Fac.FieldByName('op_num_corre').AsString) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
@@ -2040,6 +2046,20 @@ begin
     begin
       ShowMessage('SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS, SE SOBREPASO EL LIMITE DE ESPERA PARA IMPRESION (15 Seg.).');
       // self.Enabled := True;
+
+      self.cJsonUpdate := '';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS, SE SOBREPASO EL LIMITE DE ESPERA PARA IMPRESION (15 Seg.).",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
+      self.oBtn_Env_DataClick(self);
+
       oJsonFull := nil;
       EXIT;
     end;
@@ -2050,6 +2070,20 @@ begin
     begin
       ShowMessage('SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL');
       // self.Enabled := True;
+
+      self.cJsonUpdate := '';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
+      self.oBtn_Env_DataClick(self);
+
       oJsonFull := nil;
       EXIT;
     end;
@@ -2072,8 +2106,8 @@ begin
     if (self.Verifica_Error_Imp() = false) then
     begin
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Empresa) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Sucursal) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "' + AHK_FISCAL_LIB.cOFG_Num_NCF + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "' + AHK_FISCAL_LIB.cOFG_Num_COO + '",';
@@ -2090,15 +2124,15 @@ begin
     ELSE
     begin
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Empresa) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Sucursal) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_status": "' + IntToStr(integer(AHK_FISCAL_LIB.HKA_FP_Error)) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "' + TRIM(AHK_FISCAL_LIB.HKA_ST_Error) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "ERROR DE LA IMPRESORA FISCAL",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
 
       self.olStatus_Print.Caption := 'ACTUALZIANDO STATUS DE PROCESADO EN LA NUBE.';
@@ -2106,7 +2140,17 @@ begin
     end;
     self.oBtn_Env_DataClick(self);
 
-    if self.bSendOk = false then
+    if (self.bSendOk = 1) then
+    begin
+
+    end
+    ELSE if (self.bSendOk = 2) then
+    begin
+      ShowMessage('EL DOCUMENTO SE ENTREGO AL SERVIDIOR Y SE RESOPONDIO CON ERROR.');
+      oJsonFull := nil;
+      EXIT;
+    end
+    else if (self.bSendOk = -1) then
     begin
       ShowMessage('NO ES POSIBLE ESTABLECER CONTACTO CON LA NUBE DEL SISTEMA PARA ACTUALZIAR LA FACTURA.');
       oJsonFull := nil;
