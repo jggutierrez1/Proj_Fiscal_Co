@@ -127,7 +127,7 @@ function HKA_ShowStatusProcesando(pShowMessage: Boolean; var pStringStatus: stri
 
 implementation
 
-uses utiles, Main;
+uses utiles, sinco_main;
 
 function Fecha_Hora_Ahk(var dFecha: TdateTime): Boolean;
 var
@@ -1176,7 +1176,7 @@ begin
       cText_Total := trim(utiles.Read_IniFacilValue('Fiscal_Opt', 'TotalDocum2', 'S', 'Cambio C/Servicio'));
     end;
 
-    if (trim(fMain.oObservacion.Text) <> '') then
+    if (trim(fSinco_Main.oObservacion.Text) <> '') then
     begin
       iCnt := iCnt + 1;
       cComando := 'j' + trim(IntToStr(iCnt)) + '' + 'Observación:';
@@ -1189,7 +1189,7 @@ begin
       for iIdx := 0 to 3 do
       begin
         iCnt := iCnt + 1;
-        cComando := 'j' + trim(IntToStr(iCnt)) + '' + fMain.oObservacion.Lines[iIdx];
+        cComando := 'j' + trim(IntToStr(iCnt)) + '' + fSinco_Main.oObservacion.Lines[iIdx];
         if (bHKALog = true) then
           utiles.LogToFile(cComando, ExtractFilePath(application.ExeName) + '\AHK.LOG');
         SendCmd(@HKA_FP_Status, @HKA_FP_Error, cComando);

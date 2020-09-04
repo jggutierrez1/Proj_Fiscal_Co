@@ -3,7 +3,6 @@ program TSR_SINCOSOFT_AHK;
 uses
   Vcl.Forms,
   SyncObjs,
-  main in 'main.pas' {fMain},
   AHK_FISCAL_LIB in 'AHK_FISCAL_LIB.pas',
   utiles in 'utiles.pas',
   CommPortList in 'CommPortList.pas',
@@ -17,7 +16,8 @@ uses
   NetworkFunctions in 'NetworkFunctions.pas',
   Base64 in 'Base64.pas',
   SplashForm in 'SplashForm.pas' {TSplashForm},
-  SplashForm2 in 'SplashForm2.pas' {TSplashForm2};
+  SplashForm2 in 'SplashForm2.pas' {TSplashForm2},
+  sinco_main in 'sinco_main.pas' {fSinco_Main};
 
 {$R *.res}
 
@@ -32,7 +32,7 @@ begin
   end;
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TfMain, fMain);
+  Application.CreateForm(TfSinco_Main, fSinco_Main);
   Application.Run;
 
 end.
