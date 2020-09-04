@@ -251,6 +251,7 @@ type
     procedure Hacer_Cierres;
     procedure orBtn_Doit_RDocClick(Sender: TObject);
     procedure oBtn_manualClick(Sender: TObject);
+    procedure orBtn_Doit_RFecClick(Sender: TObject);
   private
     { Private declarations }
     cSerial_Working: string;
@@ -436,8 +437,8 @@ begin
               begin
                 opTmpDb.FieldByName(cField).Value := null;
               end;
-            else
-              opTmpDb.FieldByName(cField).Value := null;
+          else
+            opTmpDb.FieldByName(cField).Value := null;
           end;
 
           if cField <> 'op_fecha' then
@@ -456,7 +457,8 @@ begin
       end;
       oPrn_lists := nil;
       oFact_cabs := nil;
-      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON.LOG');
+      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO [' + cValue + ']', ExtractFilePath(application.ExeName) +
+        '\JSON.LOG');
       result := -1;
       EXIT;
     end;
@@ -617,8 +619,8 @@ begin
                 begin
                   opTmpDb.FieldByName(cField).Value := null;
                 end;
-              else
-                opTmpDb.FieldByName(cField).Value := null;
+            else
+              opTmpDb.FieldByName(cField).Value := null;
             end;
           until not ObjectFindNext(oItemsIter);
         // opTmpDb.FieldByName('Prod_total').AsFloat := opTmpDb.FieldByName('Prod_Cant').AsFloat * opTmpDb.FieldByName('Prod_Precio').AsInteger;
@@ -634,7 +636,8 @@ begin
       end;
       oPrn_lists := nil;
       oFact_dets := nil;
-      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON.LOG');
+      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO [' + cValue + ']', ExtractFilePath(application.ExeName) +
+        '\JSON.LOG');
       result := -1;
       EXIT;
     end;
@@ -690,7 +693,8 @@ begin
     self.RESTRequest3.Method := REST.Types.rmPOST;
     self.RESTRequest3.Params.Clear;
     // self.RESTRequest3.Params.AddItem('body', trim(self.cJsonUpdate), TRESTRequestParameterKind.pkREQUESTBODY, [poDoNotEncode], TRESTContentType.ctAPPLICATION_JSON);
-    self.RESTRequest3.Params.AddItem('', TRIM(self.cJsonUpdate), TRESTRequestParameterKind.pkREQUESTBODY, [poDoNotEncode], TRESTContentType.ctAPPLICATION_JSON);
+    self.RESTRequest3.Params.AddItem('', TRIM(self.cJsonUpdate), TRESTRequestParameterKind.pkREQUESTBODY,
+      [poDoNotEncode], TRESTContentType.ctAPPLICATION_JSON);
     utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\JSON.LOG');
 
     self.RESTRequest3.Execute;
@@ -712,7 +716,8 @@ begin
     end;
   except
     begin
-      utiles.LogToFile('POST-DATA: ' + IntToStr(RESTResponse3.StatusCode) + ':' + RESTResponse3.StatusText, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
+      utiles.LogToFile('POST-DATA: ' + IntToStr(RESTResponse3.StatusCode) + ':' + RESTResponse3.StatusText,
+        ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
       self.bSendOk := false;
     end;
   end;
@@ -847,7 +852,8 @@ begin
   cparEmpr := TRIM(self.oHttp_Server_Empr.Text);
   cParSucu := TRIM(self.oHttp_Server_Sucu.Text);
 
-  cPrepUrl := cUrlBase + '/DocumentosPendientes/' + cparEmpr + '/' + cParSucu + '?test=' + utiles.iif(self.oCk_Test_Mode.Checked = True, '1', '0');
+  cPrepUrl := cUrlBase + '/DocumentosPendientes/' + cparEmpr + '/' + cParSucu + '?test=' +
+    utiles.iif(self.oCk_Test_Mode.Checked = True, '1', '0');
   try
     self.RESTClient2.BaseURL := cPrepUrl;
     self.RESTRequest2.Params.Clear;
@@ -856,7 +862,8 @@ begin
     cJsonResult := jValue.ToString;
   except
     begin
-      utiles.LogToFile('POST-DATA: ' + IntToStr(RESTResponse2.StatusCode) + ':' + RESTResponse2.StatusText, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
+      utiles.LogToFile('POST-DATA: ' + IntToStr(RESTResponse2.StatusCode) + ':' + RESTResponse2.StatusText,
+        ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
       cJsonResult := '{"print_list":{"fact_cabs":[],"fact_dets":{}}}';
     end;
   end;
@@ -901,23 +908,25 @@ end;
 procedure TfMain.orBtn_Doit_RDocClick(Sender: TObject);
 var
   cFisc_Cmd: string;
+  cSec_Ini, cSec_Fin: string;
 begin
   {
-    Para facturas almacenadas en memoria de auditoria F
-    Para notas de crédito almacenadas en la memoria de auditoria C
-    Para notas de débito almacenadas en la memoria de auditoria D
-    Todos los documentos no fiscales T
-    Reporte X X
-    Para reportes Z, almacenadas en la memoria de auditoria Z
+    F=Para facturas almacenadas en memoria de auditoria.
+    C=Para notas de crédito almacenadas en la memoria de auditoria.
+    D=Para notas de débito almacenadas en la memoria de auditoria.
+    T=Todos los documentos no fiscales.
+    X=Reporte X.
+    Z=Para reportes Z, almacenadas en la memoria de auditoria.
   }
 
   {
-    Factura
-    Devolucion de Venta
-    Nota de Debito
-    CierreX
-    CierreZ
+    1=Factura
+    2=Devolucion de Venta
+    3=Nota de Debito
+    4=CierreX
+    5=CierreZ
   }
+  cFisc_Cmd := '';
   case self.oLst_Reimpr_Tipo.Value of
     1:
       begin
@@ -941,14 +950,67 @@ begin
       end;
   end;
 
-  if (bHKALog = True) then
-    utiles.LogToFile(cFisc_Cmd, ExtractFilePath(application.ExeName) + '\AHK.LOG');
-  SendCmd(@HKA_FP_Status, @HKA_FP_Error, PChar(cFisc_Cmd));
+  cSec_Ini := utiles.PadL(TRIM(IntToStr(self.orSec_Ini.Value)), 7, '0');
+  cSec_Fin := utiles.PadL(TRIM(IntToStr(self.orSec_Fin.Value)), 7, '0');
+  cFisc_Cmd := 'R' + cFisc_Cmd + cSec_Ini + cSec_Fin;
 
   if (bHKALog = True) then
     utiles.LogToFile(cFisc_Cmd, ExtractFilePath(application.ExeName) + '\AHK.LOG');
   SendCmd(@HKA_FP_Status, @HKA_FP_Error, PChar(cFisc_Cmd));
+end;
 
+procedure TfMain.orBtn_Doit_RFecClick(Sender: TObject);
+var
+  cFisc_Cmd: string;
+  cFech_Ini, cFech_Fin: string;
+begin
+  {
+    F=Para facturas almacenadas en memoria de auditoria.
+    C=Para notas de crédito almacenadas en la memoria de auditoria.
+    D=Para notas de débito almacenadas en la memoria de auditoria.
+    T=Todos los documentos no fiscales.
+    X=Reporte X.
+    Z=Para reportes Z, almacenadas en la memoria de auditoria.
+  }
+
+  {
+    1=Factura
+    2=Devolucion de Venta
+    3=Nota de Debito
+    4=CierreX
+    5=CierreZ
+  }
+  cFisc_Cmd := '';
+  case self.oLst_Reimpr_Tipo.Value of
+    1:
+      begin
+        cFisc_Cmd := 'f';
+      end;
+    2:
+      begin
+        cFisc_Cmd := 'c';
+      end;
+    3:
+      begin
+        cFisc_Cmd := 'd';
+      end;
+    4:
+      begin
+        cFisc_Cmd := 'x';
+      end;
+    5:
+      begin
+        cFisc_Cmd := 'z';
+      end;
+  end;
+
+  cFech_Ini := FormatDateTime('YYYYMMDD', self.orFec_Ini.Value);
+  cFech_Fin := FormatDateTime('YYYYMMDD', self.orFec_Fin.Value);
+  cFisc_Cmd := 'R' + cFisc_Cmd + '0' + COPY(cFech_Ini, 2, 6) + '0' + COPY(cFech_Fin, 2, 6);
+
+  if (bHKALog = True) then
+    utiles.LogToFile(cFisc_Cmd, ExtractFilePath(application.ExeName) + '\AHK.LOG');
+  SendCmd(@HKA_FP_Status, @HKA_FP_Error, PChar(cFisc_Cmd));
 end;
 
 procedure TfMain.oTimeCheckTimer(Sender: TObject);
@@ -1114,11 +1176,11 @@ begin
           self.oWait_Image.Visible := True;
         end;
       end
-    else
-      begin
-        self.oTimeCheck.Enabled := false;
-        self.iShoiceAct := 0;
-      end;
+  else
+    begin
+      self.oTimeCheck.Enabled := false;
+      self.iShoiceAct := 0;
+    end;
   end;
 end;
 
@@ -1335,11 +1397,13 @@ begin
   begin
     cDocuemntoEnlace := TRIM(self.oMem_Fac.FieldByName('op_num_rel').AsString);
 
-    AHK_FISCAL_LIB.Abre_NotaDeCredito(TRIM(self.oMem_Fac.FieldByName('op_nom_cliente').AsString), TRIM(self.oMem_Fac.FieldByName('op_dir_cliente').AsString), cDocuemntoEnlace,
+    AHK_FISCAL_LIB.Abre_NotaDeCredito(TRIM(self.oMem_Fac.FieldByName('op_nom_cliente').AsString),
+      TRIM(self.oMem_Fac.FieldByName('op_dir_cliente').AsString), cDocuemntoEnlace,
       TRIM(self.oMem_Fac.FieldByName('op_nip_cliente').AsString));
   end
   else
-    AHK_FISCAL_LIB.Abrir_Cupon(self.oMem_RucCte.Text, self.oMem_NomCte.Text, self.oMem_DirCte.Text, TRIM(self.oMem_Fac.FieldByName('op_tel_cliente').AsString));
+    AHK_FISCAL_LIB.Abrir_Cupon(self.oMem_RucCte.Text, self.oMem_NomCte.Text, self.oMem_DirCte.Text,
+      TRIM(self.oMem_Fac.FieldByName('op_tel_cliente').AsString));
 
   if (bBreak_Proc = True) then
     EXIT;
@@ -1486,7 +1550,8 @@ begin
 
     if (AHK_FISCAL_LIB.CheckFprinter() = True) then
     begin
-      messagedlg('ESPERE AL QUE EL IMPRESOR TERMINE DE IMPRIMIR EL DOCUMENTO, [PUDEN SER VARIAS PAGINAS]', mtInformation, [mbOK], 0);
+      messagedlg('ESPERE AL QUE EL IMPRESOR TERMINE DE IMPRIMIR EL DOCUMENTO, [PUDEN SER VARIAS PAGINAS]',
+        mtInformation, [mbOK], 0);
 
       AHK_FISCAL_LIB.HKA_ShowStatusByName(false, sStatus);
       self.olStatus_Print.Caption := UpperCase(TRIM(sStatus));
@@ -1522,7 +1587,8 @@ begin
     if (AHK_FISCAL_LIB.CheckFprinter() = True) then
     begin
 
-      messagedlg('ESPERE AL QUE EL IMPRESOR TERMINE DE IMPRIMIR EL DOCUMENTO, [PUDEN SER VARIAS PAGINAS]', mtInformation, [mbOK], 0);
+      messagedlg('ESPERE AL QUE EL IMPRESOR TERMINE DE IMPRIMIR EL DOCUMENTO, [PUDEN SER VARIAS PAGINAS]',
+        mtInformation, [mbOK], 0);
 
       AHK_FISCAL_LIB.HKA_ShowStatusByName(false, sStatus);
       self.olStatus_Print.Caption := UpperCase(TRIM(sStatus));
@@ -1533,7 +1599,9 @@ begin
         self.olStatus_Doc.Repaint;
 
         AHK_FISCAL_LIB.Procesa_CierreZ();
-        messagedlg('EL CIERRE Z (CIERRE DE DIA), HA SIDO IMRESO. NO SERA POSIBLE HACER OTRO CIERRE Z HASTA EL DIA DE MAÑANA.', mtWarning, [mbOK], 0);
+        messagedlg
+          ('EL CIERRE Z (CIERRE DE DIA), HA SIDO IMRESO. NO SERA POSIBLE HACER OTRO CIERRE Z HASTA EL DIA DE MAÑANA.',
+          mtWarning, [mbOK], 0);
       end;
 
     end;
@@ -1576,7 +1644,8 @@ begin
       SleepEx(iVerifEsp_Stat_Int, True);
       application.ProcessMessages;
       bResult := True;
-      self.olStatus_Print.Caption := cMyStatus + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Stat_try)) + '] Intentos:..';
+      self.olStatus_Print.Caption := cMyStatus + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Stat_try))
+        + '] Intentos:..';
       self.olStatus_Print.Repaint;
     end
     else
@@ -1617,8 +1686,8 @@ begin
       bResult := True;
       iConsumid := ((iVerifFin_Stat_Int / 1000) * I);
       iRestante := ((iVerifFin_Stat_Int / 1000) * iVerifFin_Stat_try);
-      self.olStatus_Print.Caption := 'ESPERANDO FIN DE LA IMPRESION FISCAL [' + TRIM(utiles.FloatToStr3(iConsumid, 0)) + ' DE ' + TRIM(utiles.FloatToStr3(iRestante, 3)) +
-        ' Segundos:..';
+      self.olStatus_Print.Caption := 'ESPERANDO FIN DE LA IMPRESION FISCAL [' + TRIM(utiles.FloatToStr3(iConsumid, 0)) +
+        ' DE ' + TRIM(utiles.FloatToStr3(iRestante, 3)) + ' Segundos:..';
       self.olStatus_Print.Repaint;
 
       AHK_FISCAL_LIB.HKA_ShowErrorByName(false, cMyError);
@@ -1664,7 +1733,8 @@ begin
       SleepEx(iVerifEsp_Erro_Int, True);
       application.ProcessMessages;
       bResult := True;
-      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) + '] Intentos:..';
+      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) +
+        '] Intentos:..';
       self.olStatus_Error.Color := $000000B3;
       self.olStatus_Error.Repaint;
     end
@@ -1679,7 +1749,8 @@ begin
 
     if (TRIM(UpperCase(cMyError)) = TRIM(UpperCase('Fin de la entrega del papel.'))) then
     begin
-      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) + '] Intentos:..';
+      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) +
+        '] Intentos:..';
       self.olStatus_Error.Color := $000000B3;
       self.olStatus_Error.Repaint;
       bResult := false;
@@ -1785,7 +1856,8 @@ begin
   sJsonStrn := stringreplace(sJsonStrn, #$A, '', [rfReplaceAll]);
 
   oJsonFull := SO(sJsonStrn);
-  if ((not Assigned(oJsonFull)) or (TRIM(self.oHttp_Result2.Text) = '{"print_list":{"fact_cab":[],"fact_det":{}}}')) then
+  if ((not Assigned(oJsonFull)) or (TRIM(self.oHttp_Result2.Text) = '{"print_list":{"fact_cab":[],"fact_det":{}}}'))
+  then
   begin
     self.olStatus_Doc.Caption := 'EN ESPERA DE NUEVOS DOCUMENTOS:..';
     self.olStatus_Error.Repaint;
@@ -1812,7 +1884,8 @@ begin
 
   if (self.CargaDataFact(oJsonFull, oMem_Fac) <= 0) then
   begin
-    ShowMessage('SE DETECTO UN ERROR EN AL DESCRIPCION DE LOS PRODUCTOS DEL DOCUMENTO.' + #13 + 'SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL.');
+    ShowMessage('SE DETECTO UN ERROR EN AL DESCRIPCION DE LOS PRODUCTOS DEL DOCUMENTO.' + #13 +
+      'SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL.');
     self.cJsonUpdate := '';
     self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Empresa) + '",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(AHK_FISCAL_LIB.cOFG_id_Sucursal) + '",';
@@ -1850,8 +1923,9 @@ begin
     self.bSendOk := false;
     cOp_id := self.oMem_Fac.FieldByName('op_id').AsString;
 
-    self.olStatus_Doc.Caption := 'IMPRIMIENDO CLIENTE:[' + self.oMem_Fac.FieldByName('op_nom_cliente').AsString + '], DOCUMENTO:[' + self.oMem_Fac.FieldByName('op_num_corre')
-      .AsString + '], VALOR:[' + utiles.FloatToStr3(self.oMem_Fac.FieldByName('op_total').AsFloat, 3) + ']';
+    self.olStatus_Doc.Caption := 'IMPRIMIENDO CLIENTE:[' + self.oMem_Fac.FieldByName('op_nom_cliente').AsString +
+      '], DOCUMENTO:[' + self.oMem_Fac.FieldByName('op_num_corre').AsString + '], VALOR:[' +
+      utiles.FloatToStr3(self.oMem_Fac.FieldByName('op_total').AsFloat, 3) + ']';
     self.olStatus_Doc.Repaint;
 
     if (self.CargaDataDet(oJsonFull, oMem_Det, cOp_id) <= 0) then
@@ -1877,7 +1951,8 @@ begin
 
     if (self.Verifica_Status_Espe() = True) then
     begin
-      ShowMessage('SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS, SE SOBREPASO EL LIMITE DE ESPERA PARA IMPRESION (15 Seg.).');
+      ShowMessage
+        ('SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS, SE SOBREPASO EL LIMITE DE ESPERA PARA IMPRESION (15 Seg.).');
       // self.Enabled := True;
       oJsonFull := nil;
       EXIT;

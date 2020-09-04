@@ -206,10 +206,9 @@ object fMain: TfMain
     Top = 0
     Width = 774
     Height = 445
-    ActivePage = oTab_Main
+    ActivePage = oTab_Print
     Align = alClient
     TabOrder = 1
-    ExplicitTop = -6
     object oTab_Main: TTabSheet
       Caption = 'Principal'
       object oPrinter_Img: TImage
@@ -3792,14 +3791,16 @@ object fMain: TfMain
         Top = 148
         Width = 766
         Height = 269
-        ActivePage = TabSheet3
+        ActivePage = TabSheet6
         Align = alBottom
         TabOrder = 1
+        ExplicitLeft = -1
         object TabSheet3: TTabSheet
           Caption = 'Por Rango de Fecha'
+          ExplicitHeight = 240
           object Label7: TLabel
             Left = 223
-            Top = 59
+            Top = 58
             Width = 40
             Height = 17
             Caption = 'Desde:'
@@ -3812,7 +3813,7 @@ object fMain: TfMain
           end
           object Label8: TLabel
             Left = 423
-            Top = 59
+            Top = 58
             Width = 33
             Height = 17
             Caption = 'Hasta'
@@ -3825,7 +3826,7 @@ object fMain: TfMain
           end
           object Shape4: TShape
             Left = -51
-            Top = 127
+            Top = 128
             Width = 809
             Height = 2
           end
@@ -3859,11 +3860,12 @@ object fMain: TfMain
           end
           object orBtn_Doit_RFec: TPngBitBtn
             Left = 303
-            Top = 135
+            Top = 146
             Width = 153
             Height = 65
             Caption = 'Solicitar e Imprimir'
             TabOrder = 2
+            OnClick = orBtn_Doit_RFecClick
             PngImage.Data = {
               89504E470D0A1A0A0000000D4948445200000020000000200806000000737A7A
               F400000006624B474400FF00FF00FFA0BDA793000000FC4944415478DA636418
@@ -3882,7 +3884,7 @@ object fMain: TfMain
           Caption = 'Por Rango de Correlatvo'
           ImageIndex = 1
           object Label27: TLabel
-            Left = 231
+            Left = 224
             Top = 58
             Width = 40
             Height = 17
@@ -3895,7 +3897,7 @@ object fMain: TfMain
             ParentFont = False
           end
           object Label29: TLabel
-            Left = 431
+            Left = 424
             Top = 58
             Width = 33
             Height = 17
@@ -3909,13 +3911,13 @@ object fMain: TfMain
           end
           object Shape1: TShape
             Left = -25
-            Top = 41
+            Top = 36
             Width = 809
             Height = 2
           end
           object Shape2: TShape
             Left = -51
-            Top = 124
+            Top = 128
             Width = 809
             Height = 2
           end
@@ -3941,8 +3943,8 @@ object fMain: TfMain
               454E44AE426082}
           end
           object orSec_Ini: TDBNumberEditEh
-            Left = 231
-            Top = 81
+            Left = 223
+            Top = 76
             Width = 121
             Height = 21
             DynProps = <>
@@ -3952,8 +3954,8 @@ object fMain: TfMain
             Visible = True
           end
           object orSec_Fin: TDBNumberEditEh
-            Left = 431
-            Top = 81
+            Left = 423
+            Top = 76
             Width = 121
             Height = 21
             DynProps = <>
