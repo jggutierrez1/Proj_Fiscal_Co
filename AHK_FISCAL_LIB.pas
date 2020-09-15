@@ -173,7 +173,7 @@ var
   cComando: string;
   cNum_Coo: string;
 begin
-  utiles.WaitStart(oForm, 'Este proceso de reimpresi�n puede tardar varios minutos.' + #13 + 'Por favor espere mientras la impresora fiscal ejecuta la orden.');
+  utiles.WaitStart(oForm, 'Este proceso de reimpresión puede tardar varios minutos.' + #13 + 'Por favor espere mientras la impresora fiscal ejecuta la orden.');
   cNum_Coo := utiles.padl(trim(IntToStr(iNum_Coo)), 7, '0');
   case iTipo of
     1: { Factura }
@@ -226,13 +226,13 @@ begin
   nChoice := Integer(HKA_FP_Status);
   case nChoice of
     0:
-      cStatus := 'Status Desconocido.';
+      cStatus := 'Estatus desconocido.';
     1:
-      cStatus := 'En modo prueba y en espera.';
+      cStatus := 'En modo de prueba y en espera.';
     2:
-      cStatus := 'En modo prueba y emisión de documentos fiscales.';
+      cStatus := 'En modo de prueba y emisión de documentos fiscales.';
     3:
-      cStatus := 'En modo prueba y emisión de documentos no fiscales.';
+      cStatus := 'En modo de prueba y emisión de documentos no fiscales.';
     4:
       cStatus := 'En modo fiscal y en espera.';
     5:
@@ -252,10 +252,10 @@ begin
     12:
       cStatus := 'En modo fiscal y carga completa de la memoria fiscal y en emisión de documentos no fiscales.';
     else
-      cStatus := 'Status Desconocido.';
+      cStatus := 'Estatus desconocido.';
   end;
 
-  pStringStatus := UpperCase(trim(cStatus));
+  pStringStatus := trim(cStatus);
   AHK_FISCAL_LIB.HKA_ST_Status := pStringStatus;
   if (pShowMessage = true) then
     MessageDlg(cStatus, mtInformation, [mbOk], 0);
@@ -276,7 +276,7 @@ begin
   nChoice := Integer(HKA_FP_Status);
   case nChoice of
     0:
-      cStatus := 'Status Desconocido.';
+      cStatus := 'Estatus desconocido.';
     1:
       cStatus := 'En modo prueba y en espera.';
     2:
@@ -305,7 +305,7 @@ begin
       cStatus := 'Status Desconocido.';
   end;
 
-  pStringStatus := UpperCase(trim(cStatus));
+  pStringStatus := trim(cStatus);
   if (pShowMessage = true) then
     MessageDlg(cStatus, mtInformation, [mbOk], 0);
 
@@ -325,7 +325,7 @@ begin
   nChoice := Integer(HKA_FP_Status);
   case nChoice of
     0:
-      cStatus := 'Status Desconocido.';
+      cStatus := 'Estatus desconocido.';
     1:
       cStatus := 'En modo prueba y en espera.';
     2:
@@ -351,11 +351,11 @@ begin
     12:
       cStatus := 'En modo fiscal y carga completa de la memoria fiscal y en emisión de documentos no fiscales.';
     else
-      cStatus := 'Status Desconocido.';
+      cStatus := 'Estatus desconocido.';
   end;
-  poText.caption := 'STATUS FISCAL: ' + cStatus;
+  poText.caption := 'Estatus fiscal: ' + cStatus;
   poText.Repaint;
-  pStringStatus := UpperCase(trim(cStatus));
+  pStringStatus := trim(cStatus);
   if (pShowMessage = true) then
     MessageDlg(cStatus, mtInformation, [mbOk], 0);
 
@@ -377,7 +377,7 @@ begin
   nChoice := Integer(HKA_FP_Error);
   case nChoice of
     0:
-      cError := 'No hay error.';
+      cError := 'Sin errores.';
     1:
       begin
         cSerieIMF := utiles.Read_IniFacilValue('Fiscal_Opt', 'ModeloIMP', 'S', '');
@@ -399,7 +399,7 @@ begin
     2:
       cError := 'Error mecánico en la entrega del papel.';
     3:
-      cError := 'Fin de la entrega del papel y error mec�nico.';
+      cError := 'Fin de la entrega del papel y error mecánico.';
     80:
       cError := 'Comando inválido, valor inválido.';
     84:
@@ -417,7 +417,7 @@ begin
     112:
       cError := 'Buffer completo. (Debe enviar comando de reinicio.';
     128:
-      cError := 'Error de comunicacián.';
+      cError := 'Error de comunicación.';
     137:
       cError := 'No hay respuesta.';
     144:
@@ -430,12 +430,12 @@ begin
       cError := 'Error desconocido.';
   end;
 
-  pMessageError := UpperCase(trim(cError));
+  pMessageError := trim(cError);
   AHK_FISCAL_LIB.HKA_ST_Error := pMessageError;
   if (nChoice <> 0) then
   begin
     if pShowMessage = true then
-      MessageDlg('ERROR ENVIADO POR LA IMPRESORA FISCAL AHK: [' + cError + ']', mtError, [mbOk], 0);
+      MessageDlg('Error enviado por la impresora fiscal AHK: [' + cError + ']', mtError, [mbOk], 0);
 
     if (bHKALog = true) then
       utiles.LogToFile('*->' + cError + '<-*', ExtractFilePath(application.ExeName) + '\AHK.LOG');
@@ -963,7 +963,6 @@ var
   cFormaPago, cValorPago: string;
   iChoiceFIS: Integer;
   cComando, cString: string;
-  oList: TStringList;
   iIdx, iCnt: Integer;
   iFlg_Ven, iFlg_Ref, iFlg_Caj, iFlg_BarT: Integer;
   cText_Cargo: string;
@@ -973,8 +972,6 @@ begin
   iFlg_BarT := 0;
   iIdx := 0;
   iCnt := 0;
-  oList := TStringList.Create;
-  oList.Clear;
 
   fValorCarg := fOFG_MontCargo;
 
@@ -1755,7 +1752,6 @@ end;
 function Reimprime_CierreZ(cInicioZ: string = ''; cFinZ: string = ''): Boolean;
 var
   cComando: string;
-  oFile: TStringList;
   cPathFile: string;
   cUltimaZ: string;
 begin
@@ -1865,7 +1861,7 @@ begin
     end
     else
     begin
-      cMessage := 'Hubo un error al tratar de recuperar información de la última Z en la IMPRESORA FISCAL AHK.';
+      cMessage := 'Hubo un error al tratar de recuperar información de la última [Z] en la impresora fiscal AHK.';
       MessageDlg(cMessage, mtWarning, [mbOk], 0);
       cUltimaZ := '0';
       result := false;
@@ -1960,8 +1956,8 @@ begin
 
       if (now() < dUltimaZ2d) then
       begin
-        cComando := 'No es posible hacer un reporte Z en este momento.' + #13 + 'El último reporte fue: [' + cUltimaZ1dh + '].' + #10 +
-          'El siguiente reporte Z deverá realizarse mas o menos a las [' + cUltimaZ2d + ']';
+        cComando := 'No es posible hacer un reporte [Z] en este momento.' + #13 + 'El último reporte fue: [' + cUltimaZ1dh + '].' + #10 +
+          'El siguiente reporte [Z] deverá realizarse más o menos a las: [' + cUltimaZ2d + ']';
 
         MessageDlg(cComando, mtWarning, [mbOk], 0);
         result := false;
@@ -1975,7 +1971,7 @@ begin
     end
     else
     begin
-      cComando := 'Hubo un error al tratar de recuperar informaci�n de la �ltima Z en la IMPRESORA FISCAL AHK.';
+      cComando := 'Hubo un error al tratar de recuperar información de la última [Z] en la impresora fiscal AHK.';
       MessageDlg(cComando, mtWarning, [mbOk], 0);
       result := false;
       exit;
@@ -2068,7 +2064,7 @@ begin
     bResult := ReadFpStatus(@HKA_FP_Status, @HKA_FP_Error);
     nChoice := Integer(HKA_FP_Status);
     application.ProcessMessages;
-    poText.caption := 'En espera que el impresor este disponible:..';
+    poText.caption := 'En espera que el impresor este disponible.';
     poText.Repaint;
     { 4= En Modo Fiscal y en Espera }
     if (nChoice = 4) then

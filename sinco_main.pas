@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.JSON,
   System.Classes, Vcl.Graphics, System.UITypes,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.AppEvnts, Vcl.ExtCtrls,
-  Vcl.ComCtrls, Vcl.StdCtrls,
+  Vcl.ComCtrls, Vcl.StdCtrls, ShellApi,
   Vcl.Buttons, Vcl.Mask, Vcl.DBCtrls,
   DBCtrlsEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh,
   DBAxisGridsEh, DBGridEh,
@@ -19,7 +19,9 @@ uses
   IdTCPConnection, IdTCPClient, System.Net.URLClient, System.Net.HttpClient,
   System.Net.HttpClientComponent, Vcl.Imaging.pngimage, PngBitBtn,
   Vcl.BaseImageCollection, Vcl.ImageCollection, System.ImageList, Vcl.ImgList,
-  dxGDIPlusClasses;
+  dxGDIPlusClasses, Vcl.onguard, Vcl.ogutil, inifiles, cxGraphics, cxControls,
+  cxLookAndFeels, cxLookAndFeelPainters, cxContainer, cxEdit, dxSkinsCore,
+  dxSkinsDefaultPainters, cxImage;
 
 type
   TfSinco_Main = class(TForm)
@@ -33,14 +35,11 @@ type
     olStatus_Error: TLabel;
     oTab_Sett_01: TTabSheet;
     oMComment3: TMemo;
-    oObservacion: TMemo;
     Panel1: TPanel;
     Label35: TLabel;
     Label37: TLabel;
     Label36: TLabel;
-    oBtn_Probar_Cnn: TBitBtn;
     olStatus_Conn: TLabel;
-    oBtn_Status: TBitBtn;
     oMem_TelCte: TMemo;
     oMem_NomArt: TMemo;
     oMem_DirCte: TMemo;
@@ -48,7 +47,6 @@ type
     oMem_NomCte: TMemo;
     oLst_COM_Fiscal: TDBComboBoxEh;
     Panel2: TPanel;
-    oBtn_Save: TBitBtn;
     Label2: TLabel;
     oTimeVerif: TDBNumberEditEh;
     Label3: TLabel;
@@ -58,7 +56,6 @@ type
     PageControl2: TPageControl;
     TabSheet7: TTabSheet;
     oHttp_Result2: TSynMemo;
-    oBtn_Sol_Data: TBitBtn;
     Label6: TLabel;
     oHttp_Server_Data: TEdit;
     RESTClient2: TRESTClient;
@@ -133,7 +130,6 @@ type
     oMem_Facop_status: TStringField;
     olStatus_Doc: TLabel;
     oCk_Matricial: TCheckBox;
-    oBtn_Env_Data: TBitBtn;
     RESTClient3: TRESTClient;
     RESTRequest3: TRESTRequest;
     RESTResponse3: TRESTResponse;
@@ -187,7 +183,7 @@ type
     Label28: TLabel;
     oLst_Reimpr_Tipo: TDBComboBoxEh;
     PageControl3: TPageControl;
-    TabSheet3: TTabSheet;
+    oTab_Rang_Fech: TTabSheet;
     Label7: TLabel;
     Label8: TLabel;
     Shape4: TShape;
@@ -195,7 +191,7 @@ type
     orFec_Fin: TDBDateTimeEditEh;
     orFec_Ini: TDBDateTimeEditEh;
     orBtn_Doit_RFec: TPngBitBtn;
-    TabSheet6: TTabSheet;
+    oTab_Rang_Corr: TTabSheet;
     Label27: TLabel;
     Label29: TLabel;
     Shape1: TShape;
@@ -205,14 +201,37 @@ type
     orSec_Fin: TDBNumberEditEh;
     oBtn_quit: TPngBitBtn;
     oBtn_Minimize: TPngBitBtn;
-    oBtn_Print: TPngBitBtn;
     oBtn_CierreX: TPngBitBtn;
     oBtn_CierreZ: TPngBitBtn;
-    oBtn_Cierres: TPngBitBtn;
-    oTm_Wait_For_End_Trans: TTimer;
+    oBtn_Detener: TPngBitBtn;
     oWait_Image: TImage;
-    oBtn_manual: TPngBitBtn;
     Label30: TLabel;
+    oMenu: TMainMenu;
+    SoporteTcnico1: TMenuItem;
+    oParam_Serv: TMenuItem;
+    oBtn_Sol_Data: TPngBitBtn;
+    oBtn_Env_Data: TPngBitBtn;
+    Label31: TLabel;
+    Label32: TLabel;
+    oObservacion: TMemo;
+    oBtn_Save2: TPngBitBtn;
+    oBtn_Save: TPngBitBtn;
+    oBtn_Probar_Cnn: TPngBitBtn;
+    oBtn_Status: TPngBitBtn;
+    Label33: TLabel;
+    Label34: TLabel;
+    Label38: TLabel;
+    oCk_sw_manual: TDBCheckBoxEh;
+    Label39: TLabel;
+    oIntentos_no_recibe: TDBNumberEditEh;
+    Label40: TLabel;
+    N2: TMenuItem;
+    oParam_Impr: TMenuItem;
+    OgDaysCode1: TOgDaysCode;
+    Label41: TLabel;
+    Label43: TLabel;
+    Label42: TLabel;
+    cxImage1: TcxImage;
     procedure TrayIcon1DblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure oBtn_Probar_CnnClick(Sender: TObject);
@@ -245,13 +264,8 @@ type
     procedure oBtn_MinimizeClick(Sender: TObject);
     procedure oBtn_CierreXClick(Sender: TObject);
     procedure oBtn_CierreZClick(Sender: TObject);
-    procedure oBtn_CierresClick(Sender: TObject);
     procedure Cargar_Fact;
-    procedure oBtn_PrintClick(Sender: TObject);
-    procedure oTm_Wait_For_End_TransTimer(Sender: TObject);
-    procedure Hacer_Cierres;
     procedure orBtn_Doit_RDocClick(Sender: TObject);
-    procedure oBtn_manualClick(Sender: TObject);
     procedure orBtn_Doit_RFecClick(Sender: TObject);
     function Try_Open_Port(): boolean;
     procedure Cambiar_Semaforo(cFlag: string);
@@ -262,6 +276,17 @@ type
     procedure orSec_FinExit(Sender: TObject);
     procedure orFec_IniExit(Sender: TObject);
     procedure orFec_FinExit(Sender: TObject);
+    procedure oParam_ServClick(Sender: TObject);
+    procedure DialogBoxAutoClose(const ACaption, APrompt: string; DuracaoEmSegundos: integer);
+    procedure oParam_ImprClick(Sender: TObject);
+    procedure OgDaysCode1Checked(Sender: TObject; Status: TCodeStatus);
+    procedure OgDaysCode1GetKey(Sender: TObject; var Key: TKey);
+    procedure OgDaysCode1GetCode(Sender: TObject; var Code: TCode);
+    procedure OgDaysCode1ChangeCode(Sender: TObject; Code: TCode);
+    procedure Activa_Botones(iOption: integer = 0);
+    procedure Desactiva_Botones(iOption: integer = 0);
+    procedure oBtn_DetenerClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
     cSerial_Working: string;
@@ -273,6 +298,9 @@ type
     bIgnore_Fis: boolean;
     iShoiceAct: integer;
     cRes_Path: string;
+    iBusq_Ndata: integer;
+    bPrueba_op: boolean;
+    cApp, cFPath, cPath, cExeF: string;
   public
     { Public declarations }
   end;
@@ -293,8 +321,8 @@ begin
 
   { Show the animated tray icon and also a hint balloon. }
   TrayIcon1.Visible := True;
-  TrayIcon1.Animate := True;
-  TrayIcon1.ShowBalloonHint;
+  // TrayIcon1.Animate := True;
+  // TrayIcon1.ShowBalloonHint;
 end;
 
 FUNCTION TfSinco_Main.CargaDataFact(opJsonFull: ISuperObject; var opTmpDb: TMemTableEh): integer;
@@ -457,7 +485,7 @@ begin
           end;
         until not ObjectFindNext(oItemsIter);
       opTmpDb.Post;
-      ObjectFindClose(oItemsIter);
+      // ObjectFindClose(oItemsIter);
     end;
   except
     begin
@@ -465,13 +493,15 @@ begin
       begin
         opTmpDb.cancel;
       end;
+      ObjectFindClose(oItemsIter);
       oPrn_lists := nil;
       oFact_cabs := nil;
-      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO (CABECERA) [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
+      utiles.LogToFile('Error en la estructura del documento (cabecera) [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
       result := -1;
       EXIT;
     end;
   end;
+  ObjectFindClose(oItemsIter);
   oPrn_lists := nil;
   oFact_cabs := nil;
   opTmpDb.First();
@@ -483,9 +513,8 @@ VAR
   cField: string;
   cValue: string;
   vValue: variant;
-  oItem: ISuperObject;
-  oNode, oPrn_lists: ISuperObject;
-  oFact_dets: ISuperObject;
+  // oItem: ISuperObject;
+  oPrn_lists, oFact_dets: ISuperObject;
   oItemsIter: TSuperObjectIter;
   oFieldType: TFieldType;
   fs: TFormatSettings;
@@ -634,7 +663,7 @@ begin
           until not ObjectFindNext(oItemsIter);
         // opTmpDb.FieldByName('Prod_total').AsFloat := opTmpDb.FieldByName('Prod_Cant').AsFloat * opTmpDb.FieldByName('Prod_Precio').AsInteger;
         opTmpDb.Post;
-        ObjectFindClose(oItemsIter);
+        // ObjectFindClose(oItemsIter);
       end;
     end;
   except
@@ -643,18 +672,17 @@ begin
       begin
         opTmpDb.cancel;
       end;
+      ObjectFindClose(oItemsIter);
       oPrn_lists := nil;
       oFact_dets := nil;
-      utiles.LogToFile('ERROR EN LA ESTRUCTURA DEL DOCUMENTO (DETALLE) [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
+      utiles.LogToFile('Error en la estructura del documento (detalle) [' + cValue + ']', ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
       result := -1;
       EXIT;
     end;
   end;
-
+  ObjectFindClose(oItemsIter);
   oPrn_lists := nil;
   oFact_dets := nil;
-  oItem := nil;
-  oNode := nil;
   opTmpDb.First();
   result := opTmpDb.RecordCount;
 end;
@@ -668,8 +696,8 @@ end;
 procedure TfSinco_Main.oBtn_Env_DataClick(Sender: TObject);
 var
   oResponse: ISuperObject;
-  jValue: TJSONValue;
-  iStatusCode: integer;
+  jValue1: TJSONValue;
+  // iStatusCode: integer;
   cPrepUrl: string;
   cUrlBase: string;
   cparEmpr: string;
@@ -679,7 +707,8 @@ var
 begin
   if (TRIM(self.cJsonUpdate) = '') then
   begin
-    ShowMessage('JSON DE ACTUALZIACION VACIO.');
+    DialogBoxAutoClose('Alerta', 'JSON de actualización vacío.', 10);
+    // ShowMessage('JSON de actualización vacío.');
     EXIT;
   end;
   self.oBtn_Sol_Data.Enabled := false;
@@ -702,8 +731,8 @@ begin
     utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\JSON_SEND.LOG');
 
     self.RESTRequest3.Execute;
-    jValue := self.RESTResponse3.JsonValue;
-    self.oHttp_Result2.Text := jValue.ToString;
+    jValue1 := self.RESTResponse3.JsonValue;
+    self.oHttp_Result2.Text := jValue1.ToString;
     utiles.LogToFile(TRIM(self.oHttp_Result2.Text), ExtractFilePath(application.ExeName) + '\JSON_SEND.LOG');
     self.oHttp_Result2.Refresh;
     oResponse := SO(self.oHttp_Result2.Text);
@@ -728,30 +757,6 @@ begin
   oResponse := NIL;
 end;
 
-procedure TfSinco_Main.oBtn_manualClick(Sender: TObject);
-begin
-  if (self.oImg_Semaf.tag = 1) then
-  begin
-    self.oImg_Semaf.tag := 0;
-
-    self.oBtn_manual.Caption := 'IR a Modo Manual';
-    self.oBtn_Print.Enabled := false;
-    self.iShoiceAct := 4;
-    // 4=MODO AUTOMATICO
-    self.oTm_Wait_For_End_Trans.Enabled := True;
-  end
-  ELSE
-  begin
-    self.oImg_Semaf.tag := 1;
-
-    self.oBtn_manual.Caption := 'IR a Modo Automático';
-    self.oBtn_Print.Enabled := True;
-    self.iShoiceAct := 5;
-    // 5=MODO MANUAL
-    self.oTm_Wait_For_End_Trans.Enabled := True;
-  end;
-end;
-
 procedure TfSinco_Main.oBtn_MinimizeClick(Sender: TObject);
 begin
   // Minimize application instead of closing
@@ -760,48 +765,46 @@ begin
   self.Hide;
 end;
 
-procedure TfSinco_Main.oBtn_PrintClick(Sender: TObject);
-begin
-  self.iShoiceAct := 1;
-  self.oTm_Wait_For_End_Trans.Enabled := True;
-end;
-
 procedure TfSinco_Main.oBtn_Probar_CnnClick(Sender: TObject);
 begin
-  self.Label37.Caption := 'Serial  :';
-  self.Label36.Caption := 'NINGUNO';
-  self.olStatus_Conn.Font.Color := clGreen;
-  self.olStatus_Conn.Caption := '';
-  // self.oBtn_CierreX.Enabled := False;
-  // self.oBtn_CierreZ.Enabled := False;
-  self.cSerial_Working := '';
+  if (self.oTab_Sett_01.tabvisible = True) then
+  begin
+    self.Label37.Caption := 'Serial  :';
+    // self.Label36.Caption := 'NINGUNO';
+    self.olStatus_Conn.Font.Color := clGreen;
+    self.olStatus_Conn.Caption := '';
+    self.cSerial_Working := '';
+  end;
   AHK_FISCAL_LIB.cComm_FIS := TRIM(self.oLst_COM_Fiscal.Text);
   self.oBtn_Status.Enabled := false;
 
   AHK_FISCAL_LIB.CloseFpctrl();
   if (AHK_FISCAL_LIB.OpenFpctrl(AHK_FISCAL_LIB.cComm_FIS) = True) then
   begin
-    // self.cSerial_Working := AHK_FISCAL_LIB.Recupera_Numero_Serie;
-    // self.Label36.Caption := self.cSerial_Working;
-    self.olStatus_Conn.Font.Color := clGreen;
-    self.olStatus_Conn.Caption := 'Conexión éxitosa';
-    // self.oBtn_CierreX.Enabled := True;
-    // self.oBtn_CierreZ.Enabled := True;
-    self.Label37.Caption := 'Serial: ';
-    self.oBtn_Status.Enabled := True;
-    // self.oBtn_CierreX.Enabled := True;
-    // self.oBtn_CierreZ.Enabled := True;
+    self.cSerial_Working := AHK_FISCAL_LIB.Recupera_Numero_Serie;
+    self.Label36.Caption := self.cSerial_Working;
+    if (self.oTab_Sett_01.tabvisible = True) then
+    begin
+      self.olStatus_Conn.Font.Color := clGreen;
+      self.olStatus_Conn.Caption := 'Conexión éxitosa';
+      self.Label37.Caption := 'Serial: ';
+      self.oBtn_Status.Enabled := True;
+    end;
+    self.olStatus_Error.Caption := 'Sin errores.';
+    self.olStatus_Error.repaint;
   end
   else
   begin
-    self.cSerial_Working := '';
-    self.olStatus_Conn.Font.Color := clred;
-    self.olStatus_Conn.Caption := 'No hay conexión con la impresora';
-    // self.oBtn_CierreX.Enabled := False;
-    // self.oBtn_CierreZ.Enabled := False;
-    self.oBtn_Status.Enabled := false;
-    // self.oBtn_CierreX.Enabled := False;
-    // self.oBtn_CierreZ.Enabled := False;
+    self.olStatus_Error.Caption := 'No hay conexión con la impresora fiscal.';
+    self.olStatus_Error.repaint;
+
+    if (self.oTab_Sett_01.tabvisible = True) then
+    begin
+      self.cSerial_Working := '';
+      self.olStatus_Conn.Font.Color := clred;
+      self.olStatus_Conn.Caption := 'No hay conexión con la impresora fiscal';
+      self.oBtn_Status.Enabled := false;
+    end;
   end;
 
   AHK_FISCAL_LIB.CloseFpctrl();
@@ -833,12 +836,15 @@ begin
   utiles.WriteIniFacilValue('GENERAL', 'TEST_MODE', 'B', self.bTest_Mode);
   utiles.WriteIniFacilValue('GENERAL', 'TEST_JSON', 'B', self.oCk_Test_Json.Checked);
 
-  ShowMessage('LOS DATOS DE LA CONFIGURACION HAN SIDO ALMACENADOS.');
+  utiles.WriteIniFacilValue('TIMER_BEFORE_MANUAL', 'ACTIVE', 'B', self.oCk_sw_manual.Checked);
+  utiles.WriteIniFacilValue('TIMER_BEFORE_MANUAL', 'VALUE', 'I', self.oIntentos_no_recibe.Value);
+
+  ShowMessage('Los datos de la configuración, han sido almacenados.');
 End;
 
 procedure TfSinco_Main.oBtn_Sol_DataClick(Sender: TObject);
 var
-  jValue: TJSONValue;
+  jValue2: TJSONValue;
   cJsonResult: Widestring;
   FMessage: string;
   cPrepUrl: string;
@@ -860,8 +866,8 @@ begin
     self.RESTClient2.BaseURL := cPrepUrl;
     self.RESTRequest2.Params.Clear;
     self.RESTRequest2.Execute;
-    jValue := self.RESTResponse2.JsonValue;
-    cJsonResult := jValue.ToString;
+    jValue2 := self.RESTResponse2.JsonValue;
+    cJsonResult := jValue2.ToString;
   except
     begin
       utiles.LogToFile('POST-DATA: ' + IntToStr(RESTResponse2.StatusCode) + ':' + RESTResponse2.StatusText, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
@@ -873,6 +879,14 @@ begin
   if not((TRIM(cJsonResult) = '{"print_list":{"fact_cabs":[],"fact_dets":{}}}') or (TRIM(cJsonResult) = '{"print_list":[]}')) then
   begin
     utiles.LogToFile(cJsonResult, ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
+    self.iBusq_Ndata := 0;
+  end
+  else
+  begin
+    if (self.oCk_sw_manual.Checked = True) then
+      inc(self.iBusq_Ndata)
+    else
+      self.iBusq_Ndata := 0;
   end;
 
   self.oHttp_Result2.Refresh;
@@ -905,13 +919,154 @@ begin
   self.bTest_Mode := self.oCk_Test_Mode.Checked;
 end;
 
+procedure TfSinco_Main.OgDaysCode1ChangeCode(Sender: TObject; Code: TCode);
+var
+  IniFile: TIniFile;
+  S, cFileName: string;
+begin
+  cFileName := ExtractFilePath(application.ExeName) + '\BASICVALUES.INI';
+  IniFile := TIniFile.Create(cFileName);
+  try
+    S := BufferToHex(Code, SizeOf(Code));
+    IniFile.WriteString('Keys', 'Definiction_Vals_Keys', S);
+  finally
+    IniFile.Free;
+  end;
+end;
+
+procedure TfSinco_Main.OgDaysCode1Checked(Sender: TObject; Status: TCodeStatus);
+begin
+  case Status of
+    ogValidCode:
+      begin
+        { code is valid but may still be expired }
+      end;
+    ogInvalidCode:
+      begin
+        { code is invalid }
+      end;
+    ogPastEndDate:
+      begin
+        { end date has been reached }
+      end;
+    ogDayCountUsed:
+      begin
+        ShowMessage('Expiro el tiempo de evaluación');
+        application.terminate;
+        { number of days authorized have been used }
+      end;
+    ogRunCountUsed:
+      begin
+        { number of runs authorized have been used }
+      end;
+    ogNetCountUsed:
+      begin
+        { number of authorized users has been exceeded }
+      end;
+    ogCodeExpired:
+      begin
+        { expiration date has been reached }
+      end;
+  end;
+
+  if (Status <> ogValidCode) then
+  begin
+    if fileexists(self.cFPath) then
+      ShellExecute(Handle, 'open', PChar(self.cFPath), PChar(self.cApp), '', SW_SHOWNORMAL)
+    else
+    begin
+      application.terminate;
+      System.halt;
+    end;
+  end;
+
+end;
+
+procedure TfSinco_Main.OgDaysCode1GetCode(Sender: TObject; var Code: TCode);
+var
+  IniFile: TIniFile;
+  S, cFileName: string;
+begin
+  cFileName := ExtractFilePath(application.ExeName) + '\BASICVALUES.INI';
+  IniFile := TIniFile.Create(cFileName);
+  try
+    S := IniFile.ReadString('Keys', 'Definiction_Vals_Keys', '');
+    HexToBuffer(S, Code, SizeOf(Code));
+  finally
+    IniFile.Free;
+  end;
+end;
+
+procedure TfSinco_Main.OgDaysCode1GetKey(Sender: TObject; var Key: TKey);
+const
+  cKey_Value: TKey = ($4B, $9F, $60, $EF, $1F, $C8, $03, $3B, $9A, $2C, $2A, $16, $2C, $20, $D9, $50);
+begin
+  Key := cKey_Value;
+end;
+
+procedure TfSinco_Main.oParam_ImprClick(Sender: TObject);
+begin
+  if (self.bStop_Flg = True) then
+  begin
+    if (self.oParam_Impr.Checked = True) then
+    begin
+      self.oTab_Sett_01.tabvisible := True;
+      self.PageControl1.activePage := self.oTab_Sett_01;
+    end
+    else
+    begin
+      self.oTab_Sett_01.tabvisible := false;
+      self.PageControl1.activePage := self.oTab_Main;
+    end;
+  end;
+end;
+
+procedure TfSinco_Main.oParam_ServClick(Sender: TObject);
+begin
+  if (self.bStop_Flg = True) then
+  begin
+    if (self.oParam_Serv.Checked = True) then
+    begin
+      self.oTab_Sett_02.tabvisible := True;
+      self.PageControl1.activePage := self.oTab_Sett_02;
+    end
+    else
+    begin
+      self.oTab_Sett_02.tabvisible := false;
+      self.PageControl1.activePage := self.oTab_Main;
+    end;
+  end;
+end;
+
 procedure TfSinco_Main.orBtn_Doit_RDocClick(Sender: TObject);
 begin
-  // REIMPRESION POR RANGO DE CORRELATIVOS
   self.orBtn_Doit_RDoc.Enabled := false;
-  self.iShoiceAct := 6;
-  self.oTm_Wait_For_End_Trans.Enabled := True;
-  // self.Reimprime_Por_Rango;
+
+  self.oTab_Main.tabvisible := false;
+  self.oTab_Rang_Fech.tabvisible := false;
+  self.SoporteTcnico1.Enabled := false;
+  self.oParam_Impr.Checked := false;
+  self.oParam_Serv.Checked := false;
+  self.oTab_Sett_01.tabvisible := false;
+  self.oTab_Sett_02.tabvisible := false;
+  self.PageControl1.repaint;
+  self.PageControl3.repaint;
+  self.oTab_Rang_Fech.Enabled := false;
+
+  if (bPrueba_op = false) then
+  begin
+    self.Reimprime_Por_Rango;
+  end
+  else
+    sleep(3000);
+
+  self.oTab_Rang_Fech.Enabled := True;
+  self.oTab_Main.tabvisible := True;
+  self.oTab_Rang_Fech.tabvisible := True;
+  self.PageControl1.repaint;
+  self.PageControl3.repaint;
+
+  self.orBtn_Doit_RDoc.Enabled := True;
 end;
 
 procedure TfSinco_Main.Reimprime_Por_Rango;
@@ -978,10 +1133,31 @@ end;
 procedure TfSinco_Main.orBtn_Doit_RFecClick(Sender: TObject);
 begin
   self.orBtn_Doit_RFec.Enabled := false;
-  // REIMPRESION POR RANGO DE FECHA
-  self.iShoiceAct := 7;
-  self.oTm_Wait_For_End_Trans.Enabled := True;
-  // self.Reimprime_Por_Fecha;
+
+  self.oTab_Main.tabvisible := false;
+  self.oParam_Impr.Checked := false;
+  self.oParam_Serv.Checked := false;
+  self.oTab_Sett_01.tabvisible := false;
+  self.oTab_Sett_02.tabvisible := false;
+  self.oTab_Rang_Corr.tabvisible := false;
+  self.PageControl1.repaint;
+  self.PageControl3.repaint;
+  self.oTab_Rang_Corr.Enabled := false;
+
+  if (bPrueba_op = false) then
+  begin
+    self.Reimprime_Por_Fecha;
+  end
+  else
+    sleep(3000);
+
+  self.oTab_Rang_Corr.Enabled := True;
+  self.oTab_Main.tabvisible := True;
+  self.oTab_Rang_Corr.tabvisible := True;
+  self.PageControl1.repaint;
+  self.PageControl3.repaint;
+
+  self.orBtn_Doit_RFec.Enabled := True;
 end;
 
 procedure TfSinco_Main.orFec_FinExit(Sender: TObject);
@@ -1076,222 +1252,107 @@ begin
 end;
 
 procedure TfSinco_Main.oTimeCheckTimer(Sender: TObject);
-var
-  bPrueba_loop: boolean;
 begin
-  bPrueba_loop := false;
-  self.oTimeCheck.Enabled := false;
   self.bTm_work := True;
+  self.oTimeCheck.Enabled := false;
 
-  if utiles.CheckInternet() = false then
+  Desactiva_Botones(0);
+
+  self.oTab_Print.tabvisible := false;
+  self.oTab_Print.repaint;
+
+  if (utiles.CheckInternet() = false) then
   begin
-    self.Cambiar_Semaforo('R');
+    self.Cambiar_Semaforo('A');
 
-    self.olStatus_Error.Caption := 'SE PERDIO LA COMUNICASION CON EL INTERNET, EN ESPERA DE CONEXION:...';
+    self.olStatus_Error.Caption := 'Se perdió la comunicación con el internet. En espera de conexión.';
     self.olStatus_Error.Color := $000000B3;
-    self.olStatus_Error.Refresh;
+    self.olStatus_Error.repaint;
     self.bTm_work := false;
     self.oTimeCheck.Enabled := True;
+    self.oBtn_Detener.Enabled := True;
+    self.oBtn_Detener.repaint;
     EXIT;
-  end
-  else
-  begin
-    self.olStatus_Error.Color := clGreen;
-    self.olStatus_Error.Repaint;
   end;
 
   if (self.bStop_Flg = True) then
   begin
     self.Cambiar_Semaforo('R');
-
-    self.oBtn_CierreX.Enabled := True;
-    self.oBtn_CierreZ.Enabled := True;
-    self.olWaitStop.Visible := false;
+    self.olStatus_Doc.Caption := 'Sistema detenido manualmente.';
+    self.olStatus_Doc.Font.Color := clred;
+    self.olStatus_Doc.repaint;
     self.bTm_work := false;
-    self.oBtn_Cierres.Caption := 'VOLVER A MODO FACTURACION';
-    self.oTimeCheck.Enabled := True;
+    self.oTimeCheck.Enabled := false;
+    self.oTab_Print.tabvisible := True;
+    self.oTab_Print.repaint;
+    self.Activa_Botones(0);
+    self.oBtn_Detener.Caption := 'Reanudar.';
+    self.oBtn_Detener.Enabled := True;
+    self.olWaitStop.Caption := 'Sin mensajes.';
+    self.olWaitStop.repaint;
     EXIT;
-  end
-  else
-  begin
-    self.Cambiar_Semaforo('V');
   end;
+
+  self.Cambiar_Semaforo('V');
+
+  if (self.oCk_sw_manual.Checked = True) then
+  begin
+    if (self.iBusq_Ndata >= self.oIntentos_no_recibe.Value) then
+    begin
+      self.bStop_Flg := True;
+      self.Cambiar_Indic_Espera('ON');
+      self.Cambiar_Semaforo('R');
+      self.olStatus_Doc.Caption := 'Sistema detenido por inactividad. Activar manual.';
+      self.olStatus_Doc.Font.Color := clred;
+      self.olStatus_Doc.repaint;
+      self.oTimeCheck.Enabled := false;
+      self.bTm_work := false;
+      self.oTab_Print.tabvisible := True;
+      self.oTab_Print.repaint;
+      self.Activa_Botones(0);
+      self.oBtn_Detener.Caption := 'Reanudar.';
+      self.oBtn_Detener.Enabled := True;
+      self.olWaitStop.Caption := 'Sin mensajes.';
+      self.olWaitStop.repaint;
+      self.iBusq_Ndata := 0;
+      EXIT;
+    end;
+  end;
+
+  self.olStatus_Error.Caption := 'Sin errores.';
+  self.olStatus_Error.Color := clGreen;
+  self.olStatus_Error.repaint;
 
   self.Cambiar_Semaforo('R');
-  if (bPrueba_loop = false) then
-    self.Cargar_Fact()
-  else
-  begin
-    sleep(1000);
-  end;
 
-  if (self.bStop_Flg = True) then
+  if (bPrueba_op = false) then
   begin
-    self.Cambiar_Semaforo('R');
-
-    self.oBtn_CierreX.Enabled := True;
-    self.oBtn_CierreZ.Enabled := True;
-    self.olWaitStop.Visible := false;
-    self.bTm_work := false;
-    self.oBtn_Cierres.Caption := 'VOLVER A MODO FACTURACION';
-    EXIT;
+    self.Cargar_Fact();
   end
   else
-  begin
-    self.Cambiar_Semaforo('V');
-  end;
+    sleep(1000);
+
+  self.Cambiar_Semaforo('V');
+
   self.bTm_work := false;
+  self.oBtn_Detener.Enabled := True;
+  self.oBtn_Detener.repaint;
+  self.oBtn_quit.Enabled := True;
+  self.oBtn_quit.repaint;
+  self.oBtn_Minimize.Enabled := True;
+  self.oBtn_Minimize.repaint;
   self.oTimeCheck.Enabled := True;
-
-  if (bPrueba_loop = True) then
-  begin
-    self.oTimeCheck.Enabled := True;
-    self.bTm_work := false;
-  end;
+  self.olStatus_Doc.Caption := 'En espera de nuevos documentos.';
+  self.olStatus_Doc.Font.Color := clWindowText;
+  self.olStatus_Doc.repaint;
+  self.olWaitStop.Caption := 'Sin mensajes.';
+  self.olWaitStop.repaint;
+  self.Cambiar_Indic_Espera('OFF');
 end;
 
-procedure TfSinco_Main.oTm_Wait_For_End_TransTimer(Sender: TObject);
+procedure TfSinco_Main.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
-  self.oTm_Wait_For_End_Trans.Interval := 500;
-  case self.iShoiceAct of
-    1:
-      begin
-        // IMPRIMIR FACTURA MANUALMENTE
-        if (self.bTm_work = false) then
-        begin
-          self.Cambiar_Indic_Espera('OFF');
-          self.oTimeCheck.Enabled := false;
-          self.oTm_Wait_For_End_Trans.Enabled := false;
-          self.iShoiceAct := 0;
-          self.Cargar_Fact();
-        end
-        else
-          self.Cambiar_Indic_Espera('ON');
-      end;
-    2:
-      begin
-        if (self.bTm_work = false) then
-        begin
-          self.Cambiar_Indic_Espera('OFF');
-          self.oTimeCheck.Enabled := false;
-          self.oTm_Wait_For_End_Trans.Enabled := false;
-          self.iShoiceAct := 0;
-
-          self.oTab_Sett_01.TabVisible := false;
-          self.oTab_Sett_02.TabVisible := false;
-
-          self.Hacer_Cierres();
-        end
-        else
-          self.Cambiar_Indic_Espera('ON');
-      end;
-    3:
-      begin
-        if (self.bTm_work = false) then
-        begin
-          self.Cambiar_Indic_Espera('OFF');
-          self.oTimeCheck.Enabled := false;
-          self.oTm_Wait_For_End_Trans.Enabled := false;
-          self.iShoiceAct := 0;
-
-          self.oTab_Sett_01.TabVisible := True;
-          self.oTab_Sett_02.TabVisible := True;
-
-        end
-        else
-          self.Cambiar_Indic_Espera('ON');
-      end;
-    4:
-      begin
-        if (self.bTm_work = false) then
-        begin
-          // MODO AUTOMATICO
-          self.Cambiar_Indic_Espera('OFF');
-          self.oTimeCheck.Enabled := false;
-          self.oTm_Wait_For_End_Trans.Enabled := false;
-          self.iShoiceAct := 0;
-
-          self.oTab_Sett_01.TabVisible := false;
-          self.oTab_Sett_02.TabVisible := false;
-          self.oTimeCheck.Enabled := True;
-          self.Cambiar_Semaforo('V');
-        end
-        else
-          self.Cambiar_Indic_Espera('ON');
-      end;
-    5:
-      begin
-        // MODO MANUAL
-        if (self.bTm_work = false) then
-        begin
-          self.Cambiar_Indic_Espera('OFF');
-          self.oTimeCheck.Enabled := false;
-          self.oTm_Wait_For_End_Trans.Enabled := false;
-          self.iShoiceAct := 0;
-
-          self.oTab_Sett_01.TabVisible := false;
-          self.oTab_Sett_02.TabVisible := false;
-          self.Cambiar_Semaforo('S');
-        end
-        else
-          self.Cambiar_Indic_Espera('ON');
-      end;
-    6:
-      begin
-        // REIMPRESION POR RANGO DE CORRELATIVOS
-        if (self.bTm_work = false) then
-        begin
-          self.Cambiar_Indic_Espera('OFF');
-          self.oTimeCheck.Enabled := false;
-          self.oTm_Wait_For_End_Trans.Enabled := false;
-          self.iShoiceAct := 0;
-
-          self.Reimprime_Por_Rango;
-          self.orBtn_Doit_RDoc.Enabled := true;
-        end
-        else
-          self.Cambiar_Indic_Espera('ON');
-      end;
-    7:
-      begin
-        // REIMPRESION POR RANGO DE FECHA
-        if (self.bTm_work = false) then
-        begin
-          self.Cambiar_Indic_Espera('OFF');
-          self.oTimeCheck.Enabled := false;
-          self.oTm_Wait_For_End_Trans.Enabled := false;
-          self.iShoiceAct := 0;
-
-          self.Reimprime_Por_Fecha;
-          self.orBtn_Doit_RFec.Enabled := true;
-        end
-        else
-          self.Cambiar_Indic_Espera('ON');
-      end;
-    8:
-      begin
-
-      end;
-    9:
-      begin
-
-      end;
-    10:
-      begin
-
-      end
-    else
-      begin
-        self.oTimeCheck.Enabled := false;
-        self.iShoiceAct := 0;
-      end;
-  end;
-end;
-
-procedure TfSinco_Main.oBtn_CierresClick(Sender: TObject);
-begin
-  self.iShoiceAct := 2;
-  self.oTm_Wait_For_End_Trans.Enabled := True;
+  Action := TCloseAction.caNone;
 end;
 
 procedure TfSinco_Main.FormCreate(Sender: TObject);
@@ -1299,8 +1360,15 @@ var
   oMyIcon: TIcon;
   cPassword: string;
 begin
+  self.bPrueba_op := false;
+  self.cPath := ExtractFilePath(application.ExeName);
+  self.cExeF := 'pskill.exe';
+  self.cFPath := self.cPath + '\pskill.exe';
+  self.cApp := ExtractFileName(application.ExeName) + ' -nobanner';
+
   self.cRes_Path := ExtractFileDir(ParamStr(0)) + '\Images';
 
+  self.iBusq_Ndata := 0;
   self.iShoiceAct := 0;
   self.bIgnore_Fis := false;
   self.bTest_Mode := false;
@@ -1311,12 +1379,12 @@ begin
   { Load the tray icons. }
 
   { Set up a hint message and the animation interval. }
-  self.TrayIcon1.Hint := '(M.I.F) Módulo de impresion fiscal (esta en ejecusión)';
+  self.TrayIcon1.Hint := '(M.I.F) Módulo de impresión fiscal (está en ejecución).';
   self.TrayIcon1.AnimateInterval := 200;
 
   { Set up a hint balloon. }
   self.TrayIcon1.BalloonTitle := 'Restaurar la ventana.';
-  self.TrayIcon1.BalloonHint := 'Doble click en el icono para restaurar la aplicasion.';
+  self.TrayIcon1.BalloonHint := 'Doble clic en el icono para restaurar la aplicación.';
   self.TrayIcon1.BalloonFlags := bfInfo;
 
   utiles.bConnectionOk := false;
@@ -1345,6 +1413,9 @@ begin
   self.otVerifFin_Erro_Int.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_ERROR_SECONDS', 'I', 3);
   self.otVerifFin_Erro_try.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_ERROR_INTENTS', 'I', 10);
 
+  self.oCk_sw_manual.Checked := utiles.Read_IniFacilValue('TIMER_BEFORE_MANUAL', 'ACTIVE', 'B', true);
+  self.oIntentos_no_recibe.Value := utiles.Read_IniFacilValue('TIMER_BEFORE_MANUAL', 'VALUE', 'I', 30);
+
   self.bTest_Mode := utiles.Read_IniFacilValue('GENERAL', 'TEST_MODE', 'B', false);
   self.oCk_Test_Json.Checked := utiles.Read_IniFacilValue('GENERAL', 'TEST_JSON', 'B', false);
 
@@ -1360,27 +1431,32 @@ begin
 
   self.oTimeCheck.Interval := (self.oTimeVerif.Value * 1000);
   self.oTimeCheck.Enabled := false;
-  self.oTab_Sett_01.TabVisible := false;
-  self.oTab_Sett_02.TabVisible := false;
-  self.PageControl1.ActivePage := self.oTab_Main;
+  self.oTab_Sett_01.tabvisible := false;
+  self.oTab_Sett_02.tabvisible := false;
+  self.PageControl1.activePage := self.oTab_Main;
 end;
 
 procedure TfSinco_Main.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
 begin
-  if (Key = VK_F10) then
+  if (self.bStop_Flg = True) then
   begin
-    if (self.oTab_Sett_01.TabVisible = True) then
+    if Shift = [ssShift, ssCtrl] then
     begin
-      self.iShoiceAct := 4;
-      self.oTm_Wait_For_End_Trans.Enabled := True;
-    end
-    ELSE
-    begin
-      // self.oWaitForStart.Enabled := False;
-      self.iShoiceAct := 3;
-      self.oTm_Wait_For_End_Trans.Enabled := True;
+      if (Key = VK_F10) then
+      begin
+        if (self.SoporteTcnico1.enabled = True) then
+        begin
+          //self.N2.Visible := false;
+          self.SoporteTcnico1.enabled := false;
+        end
+        ELSE
+        begin
+          //self.N2.Visible := True;
+          self.SoporteTcnico1.enabled := True;
+        end;
+        Key := 0;
+      end;
     end;
-    Key := 0;
   end;
 end;
 
@@ -1466,7 +1542,7 @@ begin
 
   utiles.cId_empresa := TRIM(self.oMem_Fac.FieldByName('op_emp_id').AsString);
 
-  cMsgPromocional := 'Gracias por su compra';
+  cMsgPromocional := 'Gracias por su compra.';
 
   FormatSettings.ShortDateFormat := 'dd/mm/yyyy';
 
@@ -1485,7 +1561,8 @@ begin
 
   if (AHK_FISCAL_LIB.HKA_ShowStatusByName(false, sStatus) = false) then
   begin
-    ShowMessage(sStatus + ' EL CUPON EM CURSO SERA ANULADO.');
+    DialogBoxAutoClose('Alerta', sStatus + ' El cupón en curso será anulado.', 10);
+    // ShowMessage(sStatus + ' El cupón en curso será anulado.');
     AHK_FISCAL_LIB.Anula_Cupon;
     result := false;
     EXIT;
@@ -1494,7 +1571,7 @@ begin
 
   AHK_FISCAL_LIB.cOFG_VarTipoV := TRIM(self.oMem_Fac.FieldByName('op_tipo').AsString);
 
-  utiles.WaitSetMsg('Ejecutando impresión de documento en equipo fiscal:..');
+  utiles.WaitSetMsg('Ejecutando impresión de documento en equipo fiscal.');
 
   if (TRIM(AHK_FISCAL_LIB.cOFG_VarTipoV) = '16') then
   begin
@@ -1595,7 +1672,7 @@ end;
 
 procedure TfSinco_Main.RESTRequest2HTTPProtocolError(Sender: TCustomRESTRequest);
 begin
-  self.olStatus_Error.Caption := 'HUBO UN ERROR AL TRATAR DE RECUPERAR LO DATOS:...';
+  self.olStatus_Error.Caption := 'Hubo un error al tratar de recuperar lo datos.';
   self.olStatus_Error.Color := $000000B3;
   self.olStatus_Error.Refresh;
   utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\HTTP_GET_ERROR.LOG');
@@ -1603,7 +1680,7 @@ end;
 
 procedure TfSinco_Main.RESTRequest3HTTPProtocolError(Sender: TCustomRESTRequest);
 begin
-  self.olStatus_Error.Caption := 'HUBO UN ERROR AL TRATAR DE REALIZAR EL ENVIO:...';
+  self.olStatus_Error.Caption := 'Hubo un error al tratar de realizar él envió.';
   self.olStatus_Error.Color := $000000B3;
   self.olStatus_Error.Refresh;
   utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\HTTP_SEND_ERROR.LOG');
@@ -1612,8 +1689,13 @@ end;
 procedure TfSinco_Main.SalirdeMFF1Click(Sender: TObject);
 begin
   Close;
-  application.Terminate;
-  System.halt;
+  if fileexists(self.cFPath) then
+    ShellExecute(Handle, 'open', PChar(self.cFPath), PChar(self.cApp), '', SW_SHOWNORMAL)
+  else
+  begin
+    application.terminate;
+    System.halt;
+  end;
 end;
 
 function TfSinco_Main.EnDeCrypt(const Value: String): String;
@@ -1641,89 +1723,185 @@ var
   sStatus: string;
 begin
   self.oBtn_CierreX.Enabled := false;
+
+  self.oBtn_Minimize.Enabled := false;
+  self.oBtn_quit.Enabled := false;
   self.oBtn_CierreZ.Enabled := false;
-  self.oBtn_Probar_CnnClick(self);
-  AHK_FISCAL_LIB.CloseFpctrl();
-  if (AHK_FISCAL_LIB.OpenFpctrl(AHK_FISCAL_LIB.cComm_FIS) = True) then
+  self.oBtn_Detener.Enabled := false;
+  self.oTab_Print.tabvisible := false;
+  self.SoporteTcnico1.Enabled := false;
+  self.oParam_Impr.Checked := false;
+  self.oParam_Serv.Checked := false;
+  self.oTab_Sett_01.tabvisible := false;
+  self.oTab_Sett_02.tabvisible := false;
+  self.PageControl1.repaint;
+
+  if (bPrueba_op = false) then
   begin
-    self.Verifica_Status_Espe();
-    self.Verifica_Error_Imp();
-
-    if (AHK_FISCAL_LIB.CheckFprinter() = True) then
+    self.oBtn_Probar_CnnClick(self);
+    AHK_FISCAL_LIB.CloseFpctrl();
+    if (AHK_FISCAL_LIB.OpenFpctrl(AHK_FISCAL_LIB.cComm_FIS) = True) then
     begin
-      messagedlg('ESPERE AL QUE EL IMPRESOR TERMINE DE IMPRIMIR EL DOCUMENTO, [PUDEN SER VARIAS PAGINAS]', mtInformation, [mbOK], 0);
+      self.Verifica_Status_Espe();
+      self.Verifica_Error_Imp();
 
-      AHK_FISCAL_LIB.HKA_ShowStatusByName(false, sStatus);
-      self.olStatus_Print.Caption := UpperCase(TRIM(sStatus));
+      if (AHK_FISCAL_LIB.CheckFprinter() = True) then
+      begin
+        messagedlg('Espere al que el impresor termine de imprimir el documento, [pueden ser varias páginas].', mtInformation, [mbOK], 0);
 
-      self.olStatus_Doc.Caption := 'IMPRIMIENDO REPORTE DE CIERRE X';
-      self.olStatus_Doc.Repaint;
+        AHK_FISCAL_LIB.HKA_ShowStatusByName(false, sStatus);
+        self.olStatus_Print.Caption := UpperCase(TRIM(sStatus));
 
-      AHK_FISCAL_LIB.Procesa_CierreX();
-      AHK_FISCAL_LIB.Espera_Proceso_IMPF(self.olWaitStop);
-      // self.oBtn_CierreX.Enabled := True;
+        self.olStatus_Doc.Caption := 'Imprimiendo reporte de cierre [X].';
+        self.olStatus_Doc.repaint;
 
+        AHK_FISCAL_LIB.Procesa_CierreX();
+        AHK_FISCAL_LIB.Espera_Proceso_IMPF(self.olWaitStop);
+        // self.oBtn_CierreX.Enabled := True;
+
+      end;
     end;
-  end;
-  self.olStatus_Doc.Caption := 'PROCESO DE IMPRESION DE REPORTE DE CIERRE X FINALIZADO';
-  self.olStatus_Doc.Repaint;
+  end
+  else
+    sleep(3000);
+
+  self.olStatus_Doc.Caption := 'Proceso de impresión de reporte de cierre [X] finalizado.';
+  self.olStatus_Doc.repaint;
 
   self.oBtn_CierreZ.Enabled := True;
+  self.oBtn_Detener.Enabled := True;
+
+  self.oTab_Print.tabvisible := True;
+  self.PageControl1.repaint;
+  self.oBtn_Minimize.Enabled := True;
+  self.oBtn_quit.Enabled := True;
+
+  self.oBtn_CierreX.Enabled := True;
 end;
 
 procedure TfSinco_Main.oBtn_CierreZClick(Sender: TObject);
 var
   sStatus: string;
 begin
-  self.oBtn_CierreX.Enabled := false;
   self.oBtn_CierreZ.Enabled := false;
 
-  self.oBtn_Probar_CnnClick(self);
-  AHK_FISCAL_LIB.CloseFpctrl();
-  if (AHK_FISCAL_LIB.OpenFpctrl(AHK_FISCAL_LIB.cComm_FIS) = True) then
+  self.oBtn_Minimize.Enabled := false;
+  self.oBtn_quit.Enabled := false;
+  self.oBtn_CierreX.Enabled := false;
+  self.oBtn_Detener.Enabled := false;
+  self.oTab_Print.tabvisible := false;
+  self.SoporteTcnico1.Enabled := false;
+  self.oParam_Impr.Checked := false;
+  self.oParam_Serv.Checked := false;
+  self.oTab_Sett_01.tabvisible := false;
+  self.oTab_Sett_02.tabvisible := false;
+  self.PageControl1.repaint;
+
+  if (bPrueba_op = false) then
   begin
-    self.Verifica_Status_Espe();
-    self.Verifica_Error_Imp();
-
-    if (AHK_FISCAL_LIB.CheckFprinter() = True) then
+    self.oBtn_Probar_CnnClick(self);
+    AHK_FISCAL_LIB.CloseFpctrl();
+    if (AHK_FISCAL_LIB.OpenFpctrl(AHK_FISCAL_LIB.cComm_FIS) = True) then
     begin
+      self.Verifica_Status_Espe();
+      self.Verifica_Error_Imp();
 
-      messagedlg('ESPERE AL QUE EL IMPRESOR TERMINE DE IMPRIMIR EL DOCUMENTO, [PUDEN SER VARIAS PAGINAS]', mtInformation, [mbOK], 0);
-
-      AHK_FISCAL_LIB.HKA_ShowStatusByName(false, sStatus);
-      self.olStatus_Print.Caption := UpperCase(TRIM(sStatus));
-
-      // if (AHK_FISCAL_LIB.Verifica_Z() = True) then
+      if (AHK_FISCAL_LIB.CheckFprinter() = True) then
       begin
-        self.olStatus_Doc.Caption := 'IMPRIMIENDO REPORTE DE CIERRE Z';
-        self.olStatus_Doc.Repaint;
 
-        AHK_FISCAL_LIB.Procesa_CierreZ();
-        AHK_FISCAL_LIB.Espera_Proceso_IMPF(self.olWaitStop);
-        messagedlg('EL CIERRE Z (CIERRE DE DIA), HA SIDO IMRESO. NO SERA POSIBLE HACER OTRO CIERRE Z HASTA EL DIA DE MAÑANA.', mtWarning, [mbOK], 0);
+        messagedlg('Espere al que el impresor termine de imprimir el documento, [pueden ser varias páginas].', mtInformation, [mbOK], 0);
+
+        AHK_FISCAL_LIB.HKA_ShowStatusByName(false, sStatus);
+        self.olStatus_Print.Caption := UpperCase(TRIM(sStatus));
+
+        // if (AHK_FISCAL_LIB.Verifica_Z() = True) then
+        begin
+          self.olStatus_Doc.Caption := 'Imprimiendo reporte de cierre [Z].';
+          self.olStatus_Doc.repaint;
+
+          AHK_FISCAL_LIB.Procesa_CierreZ();
+          AHK_FISCAL_LIB.Espera_Proceso_IMPF(self.olWaitStop);
+          messagedlg('El cierre [Z] (cierre de día), ha sido impreso.' + chr(13) + 'No será posible hacer otro cierre [Z] hasta el día de mañana.', mtWarning, [mbOK], 0);
+        end;
+
       end;
 
     end;
+  end
+  else
+    sleep(3000);
+  self.olStatus_Doc.Caption := 'Proceso de impresión de reporte de cierre [Z], finalizado.';
+  self.olStatus_Doc.repaint;
 
+  self.oBtn_CierreX.Enabled := True;
+  self.oBtn_Detener.Enabled := True;
+
+  self.oTab_Print.tabvisible := True;
+  self.PageControl1.repaint;
+  self.oBtn_Minimize.Enabled := True;
+  self.oBtn_quit.Enabled := True;
+
+  self.oBtn_CierreZ.Enabled := True;
+end;
+
+procedure TfSinco_Main.oBtn_DetenerClick(Sender: TObject);
+begin
+  self.oBtn_Detener.Enabled := false;
+  self.oBtn_CierreX.Enabled := false;
+  self.oBtn_CierreZ.Enabled := false;
+  self.oBtn_quit.Enabled := false;
+  self.oTab_Print.tabvisible := false;
+  self.SoporteTcnico1.Enabled := false;
+  self.oParam_Impr.Checked := false;
+  self.oParam_Serv.Checked := false;
+  self.oTab_Sett_01.tabvisible := false;
+  self.oTab_Sett_02.tabvisible := false;
+  self.PageControl1.repaint;
+
+  if (self.bStop_Flg = false) then
+  begin
+    if (self.oCk_sw_manual.Checked = True) then
+      self.iBusq_Ndata := 0;
+
+    self.bStop_Flg := True;
+    self.Cambiar_Indic_Espera('ON');
+    self.oBtn_Detener.Caption := 'Reanudar';
+    self.olStatus_Doc.Caption := 'Reanudando búsqueda de facturas.';
+    self.olWaitStop.Caption := 'Deteniendo servicio.';
+    self.olWaitStop.repaint;
+  end
+  else
+  begin
+    self.bStop_Flg := false;
+    self.Cambiar_Indic_Espera('OFF');
+    self.oBtn_Detener.Caption := 'Detener';
+    self.bTm_work := false;
+    self.oTimeCheck.Enabled := True;
+    self.olWaitStop.Caption := 'Reanudando servicio.';
+    self.olWaitStop.repaint;
   end;
-  self.olStatus_Doc.Caption := 'PROCESO DE IMPRESION DE REPORTE DE CIERRE Z FINALIZADO';
-  self.olStatus_Doc.Repaint;
 end;
 
 procedure TfSinco_Main.oBtn_quitClick(Sender: TObject);
 begin
   self.TrayIcon1.Visible := false;
-  self.TrayIcon1.Animate := false;
+  // self.TrayIcon1.Animate := false;
   self.TrayIcon1.CleanupInstance;
 
   Close;
-  application.Terminate;
-  System.halt;
+  if fileexists(self.cFPath) then
+    ShellExecute(Handle, 'open', PChar(self.cFPath), PChar(self.cApp), '', SW_SHOWNORMAL)
+  else
+  begin
+    application.terminate;
+    System.halt;
+  end;
+
 end;
 
 function TfSinco_Main.Verifica_Status_Espe: boolean;
 var
-  cMyStatus: string;
+  cMyStatus, cMyError: string;
   bResult: boolean;
   I: integer;
   iVerifEsp_Stat_Int, iVerifEsp_Stat_try: integer;
@@ -1734,7 +1912,7 @@ begin
   bResult := false;
   cMyStatus := '';
   self.olStatus_Print.Caption := cMyStatus;
-  self.olStatus_Print.Repaint;
+  self.olStatus_Print.repaint;
   for I := 1 to iVerifEsp_Stat_try do
   begin
     if (AHK_FISCAL_LIB.HKA_ShowStatusEspera(false, cMyStatus) = false) then
@@ -1743,8 +1921,9 @@ begin
       SleepEx(iVerifEsp_Stat_Int, True);
       application.ProcessMessages;
       bResult := True;
-      self.olStatus_Print.Caption := cMyStatus + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Stat_try)) + '] Intentos:..';
-      self.olStatus_Print.Repaint;
+      AHK_FISCAL_LIB.HKA_ShowErrorByName(false, cMyError);
+      self.olStatus_Print.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' de ' + TRIM(IntToStr(iVerifEsp_Stat_try)) + '] Intentos:..';
+      self.olStatus_Print.repaint;
     end
     else
     begin
@@ -1753,7 +1932,7 @@ begin
     end;
   end;
   self.olStatus_Print.Caption := cMyStatus;
-  self.olStatus_Print.Repaint;
+  self.olStatus_Print.repaint;
   result := bResult;
 end;
 
@@ -1773,7 +1952,7 @@ begin
   cMyStatus := '';
   cMyError := '';
   self.olStatus_Print.Caption := cMyStatus;
-  self.olStatus_Print.Repaint;
+  self.olStatus_Print.repaint;
   for I := 1 to iVerifFin_Stat_try do
   begin
     if (AHK_FISCAL_LIB.HKA_ShowStatusProcesando(false, cMyStatus, self.olWaitStop) = True) then
@@ -1784,9 +1963,9 @@ begin
       bResult := True;
       iConsumid := ((iVerifFin_Stat_Int / 1000) * I);
       iRestante := ((iVerifFin_Stat_Int / 1000) * iVerifFin_Stat_try);
-      self.olStatus_Print.Caption := 'ESPERANDO FIN DE LA IMPRESION FISCAL [' + TRIM(utiles.FloatToStr3(iConsumid, 0)) + ' DE ' + TRIM(utiles.FloatToStr3(iRestante, 3)) +
+      self.olStatus_Print.Caption := 'Esperando fin de la impresión fiscal [' + TRIM(utiles.FloatToStr3(iConsumid, 0)) + ' de ' + TRIM(utiles.FloatToStr3(iRestante, 3)) +
         ' Segundos:..';
-      self.olStatus_Print.Repaint;
+      self.olStatus_Print.repaint;
 
       AHK_FISCAL_LIB.HKA_ShowErrorByName(false, cMyError);
       self.olStatus_Error.Caption := cMyError;
@@ -1794,7 +1973,7 @@ begin
         self.olStatus_Error.Color := $000000B3
       else
         self.olStatus_Error.Color := clGreen;
-      self.olStatus_Error.Repaint;
+      self.olStatus_Error.repaint;
 
       // self.Verifica_Error_Imp();
       bResult := True;
@@ -1806,7 +1985,7 @@ begin
     end;
   end;
   self.olStatus_Print.Caption := cMyStatus;
-  self.olStatus_Print.Repaint;
+  self.olStatus_Print.repaint;
   result := bResult;
 end;
 
@@ -1820,9 +1999,9 @@ begin
   iVerifEsp_Erro_Int := self.otVerifEsp_Erro_Int.Value * 1000;
   iVerifEsp_Erro_try := self.otVerifEsp_Erro_try.Value;
 
-  cMyError := 'VERIFICANDO IMPRESORA:..';
+  cMyError := 'Verificando errores en la impresora...';
   self.olStatus_Error.Caption := cMyError;
-  self.olStatus_Error.Repaint;
+  self.olStatus_Error.repaint;
   for I := 1 to iVerifEsp_Erro_try do
   begin
     if (AHK_FISCAL_LIB.HKA_ShowErrorByName(false, cMyError) = True) then
@@ -1831,14 +2010,15 @@ begin
       SleepEx(iVerifEsp_Erro_Int, True);
       application.ProcessMessages;
       bResult := True;
-      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) + '] Intentos:..';
+      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) + '] Intentos...';
       self.olStatus_Error.Color := $000000B3;
-      self.olStatus_Error.Repaint;
+      self.olStatus_Error.repaint;
     end
     else
     begin
+      // self.olStatus_Error.Caption := 'Sin errores.';
       self.olStatus_Error.Color := clGreen;
-      self.olStatus_Error.Repaint;
+      self.olStatus_Error.repaint;
 
       bResult := false;
       break;
@@ -1846,16 +2026,16 @@ begin
 
     if (TRIM(UpperCase(cMyError)) = TRIM(UpperCase('Fin de la entrega del papel.'))) then
     begin
-      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) + '] Intentos:..';
+      self.olStatus_Error.Caption := cMyError + ' [' + TRIM(IntToStr(I)) + ' DE ' + TRIM(IntToStr(iVerifEsp_Erro_try)) + '] Intentos...';
       self.olStatus_Error.Color := $000000B3;
-      self.olStatus_Error.Repaint;
+      self.olStatus_Error.repaint;
       bResult := false;
       break;
     end;
 
   end;
   self.olStatus_Error.Caption := cMyError;
-  self.olStatus_Error.Repaint;
+  self.olStatus_Error.repaint;
   result := bResult;
 end;
 
@@ -1890,18 +2070,18 @@ end;
 procedure TfSinco_Main.Cargar_Fact;
 VAR
   oJsonFull: ISuperObject;
+  oJsonTestTx: TStringList;
+  oFileStream: TFileStream;
   sJsonStrn: string;
   cOp_id: string;
   sJsonUpdate: string;
   iLen: integer;
-  oJsonTestTx: TStringList;
-  oFileStream: TFileStream;
   cFle_Json_Demo: string;
 begin
   if (self.oCk_Test_Json.Checked = True) then
   begin
-    self.olStatus_Error.Caption := 'CARGANDO JSON DE PRUEBAS [data_test.json]:..';
-    self.olStatus_Error.Repaint;
+    self.olStatus_Doc.Caption := 'Cargando JSON de pruebas [data_test.json].';
+    self.olStatus_Doc.repaint;
 
     cFle_Json_Demo := ExtractFilePath(application.ExeName) + 'data_test.json';
     if fileexists(cFle_Json_Demo) then
@@ -1911,28 +2091,27 @@ begin
       oJsonTestTx.LoadFromStream(oFileStream);
       if (TRIM(oJsonTestTx.Text) = '') then
       begin
-        self.olStatus_Error.Caption := 'ARCHIVO [data_test.json], VACIO!!!:..';
-        self.olStatus_Error.Repaint;
+        self.olStatus_Doc.Caption := 'Archivo JSON [data_test.json], vacío.';
+        self.olStatus_Doc.repaint;
       end;
-
-      oFileStream.Destroy();
+      freeandnil(oFileStream);
     end;
   end;
 
   // self.Enabled := False;
   self.verifica_stop();
 
-  self.olStatus_Error.Caption := 'EN ESPERA DEL ESTATUS DE IMPRESORA:..';
-  self.olStatus_Error.Repaint;
+  self.olStatus_Print.Caption := 'En espera del estatus de impresora.';
+  self.olStatus_Print.repaint;
 
-  self.olStatus_Print.Caption := 'EN ESPERA DE STATUS DE ERRORES:..';
-  self.olStatus_Print.Repaint;
+  self.olStatus_Error.Caption := 'Sin errores.';
+  self.olStatus_Error.repaint;
 
   self.oBtn_Probar_CnnClick(self);
-  self.olStatus_Print.Caption := UpperCase(TRIM(self.olStatus_Conn.Caption));
-  self.olStatus_Print.Repaint;
+  self.olStatus_Print.Caption := TRIM(self.olStatus_Conn.Caption);
+  self.olStatus_Print.repaint;
 
-  if (TRIM(self.olStatus_Conn.Caption) = UpperCase('No hay conexión con la impresora')) then
+  if (TRIM(self.olStatus_Conn.Caption) = UpperCase('No hay conexión con la impresora fiscal')) then
   begin
     // self.Enabled := True;
     oJsonFull := nil;
@@ -1940,8 +2119,12 @@ begin
   end;
   if (self.oCk_Test_Json.Checked = True) then
   begin
-    if (TRIM(oJsonTestTx.Text) <> '') then
-      self.oHttp_Result2.Text := oJsonTestTx.Text;
+    if (oJsonTestTx <> nil) then
+    begin
+      if (TRIM(oJsonTestTx.Text) <> '') then
+        self.oHttp_Result2.Text := oJsonTestTx.Text;
+      freeandnil(oJsonTestTx);
+    end;
   end
   else
     self.oBtn_Sol_DataClick(self);
@@ -1954,8 +2137,8 @@ begin
   oJsonFull := SO(sJsonStrn);
   if ((not Assigned(oJsonFull)) or (TRIM(self.oHttp_Result2.Text) = '{"print_list":{"fact_cab":[],"fact_det":{}}}')) then
   begin
-    self.olStatus_Doc.Caption := 'EN ESPERA DE NUEVOS DOCUMENTOS:..';
-    self.olStatus_Error.Repaint;
+    self.olStatus_Doc.Caption := 'En espera de nuevos documentos.';
+    self.olStatus_Doc.repaint;
     // Json no valido
     // self.Enabled := True;
     oJsonFull := nil;
@@ -1966,8 +2149,8 @@ begin
   // iLen := oJsonFull['print_list.fact_cab'].AsArray.Length;
   if (iLen = 0) then
   begin
-    self.olStatus_Doc.Caption := 'EN ESPERA DE NUEVOS DOCUMENTOS:..';
-    self.olStatus_Error.Repaint;
+    self.olStatus_Doc.Caption := 'En espera de nuevos documentos.';
+    self.olStatus_Doc.repaint;
     // Json no valido
     // self.Enabled := True;
     oJsonFull := nil;
@@ -1979,7 +2162,9 @@ begin
 
   if (self.CargaDataFact(oJsonFull, oMem_Fac) <= 0) then
   begin
-    ShowMessage('SE DETECTO UN ERROR EN AL DESCRIPCION DE LOS PRODUCTOS DEL DOCUMENTO.' + #13 + 'SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL.');
+    DialogBoxAutoClose('Alerta', 'Se detectó un error en la descripción de los productos del documento.' + #13 +
+      'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.', 10);
+    // ShowMessage('Se detectó un error en la descripción de los productos del documento.' + #13 + 'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.');
     self.cJsonUpdate := '';
     self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
@@ -1989,7 +2174,7 @@ begin
     self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_id":0,';
     self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
-    self.cJsonUpdate := self.cJsonUpdate + '"op_status_det":"ERROR DE CABECERA DE FACTURA",';
+    self.cJsonUpdate := self.cJsonUpdate + '"op_status_det":"Error de cabecera de factura",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
     self.oBtn_Env_DataClick(self);
     oJsonFull := nil;
@@ -2017,14 +2202,15 @@ begin
     self.bSendOk := 0;
     cOp_id := self.oMem_Fac.FieldByName('op_id').AsString;
 
-    self.olStatus_Doc.Caption := 'IMPRIMIENDO CLIENTE:[' + self.oMem_Fac.FieldByName('op_nom_cliente').AsString + '], DOCUMENTO:[' + self.oMem_Fac.FieldByName('op_num_corre')
-      .AsString + '], VALOR:[' + utiles.FloatToStr3(self.oMem_Fac.FieldByName('op_total').AsFloat, 3) + ']';
-    self.olStatus_Doc.Repaint;
+    self.olStatus_Doc.Caption := 'Imprimiendo cliente:[' + self.oMem_Fac.FieldByName('op_nom_cliente').AsString + '], documento:[' + self.oMem_Fac.FieldByName('op_num_corre')
+      .AsString + '], valor:[' + utiles.FloatToStr3(self.oMem_Fac.FieldByName('op_total').AsFloat, 3) + ']';
+    self.olStatus_Doc.repaint;
 
     if (self.CargaDataDet(oJsonFull, oMem_Det, cOp_id) <= 0) then
     begin
-      ShowMessage('SE DETECTO UN ERROR EN AL DESCRIPCION DE LOS PRODUCTOS DEL DOCUMENTO.' + #13 +
-        'SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL.');
+      DialogBoxAutoClose('Alerta', 'Se detectó un error en la descripción de los productos del documento.' + #13 +
+        'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.', 10);
+      // ShowMessage('Se detectó un error en la descripción de los productos del documento.' + #13 + 'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.');
       self.cJsonUpdate := '';
       self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
@@ -2034,7 +2220,7 @@ begin
       self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
       self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "ERROR DE DETALLE DE FACTURA",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "Error de detalle de factura.",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
       self.oBtn_Env_DataClick(self);
       oJsonFull := nil;
@@ -2044,7 +2230,8 @@ begin
 
     if (self.Verifica_Status_Espe() = True) then
     begin
-      ShowMessage('SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS, SE SOBREPASO EL LIMITE DE ESPERA PARA IMPRESION (15 Seg.).');
+      DialogBoxAutoClose('Alerta', 'Se cancelará la impresión de del documento. Se sobrepaso el límite de espera para impresión (15 segundos).', 10);
+      // ShowMessage('Se cancelará la impresión de del documento. Se sobrepaso el límite de espera para impresión (15 segundos).');
       // self.Enabled := True;
 
       self.cJsonUpdate := '';
@@ -2056,7 +2243,7 @@ begin
       self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
       self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS, SE SOBREPASO EL LIMITE DE ESPERA PARA IMPRESION (15 Seg.).",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "Se cancelará la impresión de del documento. Se sobrepaso el límite de espera para impresión (15 segundos).",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
       self.oBtn_Env_DataClick(self);
 
@@ -2068,7 +2255,8 @@ begin
     { ------------------VERIFICASION DE ERRORES---------------------------- }
     if (self.Verifica_Error_Imp() = True) then
     begin
-      ShowMessage('SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL');
+      DialogBoxAutoClose('Alerta', 'Se cancelará la impresión del documento por error de la impresora fiscal.', 10);
+      // ShowMessage('Se cancelará la impresión del documento por error de la impresora fiscal.');
       // self.Enabled := True;
 
       self.cJsonUpdate := '';
@@ -2080,7 +2268,7 @@ begin
       self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
       self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "SE CANCELARA LA IMPRESION DE NUEVOS DOCUMENTOS POR ERROR DE LA IMPRESORA FISCAL",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "Se cancelará la impresión del documento por error de la impresora fiscal.",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
       self.oBtn_Env_DataClick(self);
 
@@ -2101,8 +2289,8 @@ begin
 
     if (self.Verifica_Status_Espe() = false) then
     begin
-
     end;
+
     if (self.Verifica_Error_Imp() = false) then
     begin
       self.cJsonUpdate := '';
@@ -2117,8 +2305,8 @@ begin
       self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "OK",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
 
-      self.olStatus_Print.Caption := 'ACTUALZIANDO STATUS DE FALLA EN LA NUBE.';
-      self.olStatus_Print.Repaint;
+      self.olStatus_Print.Caption := 'Actualizando status de falla en la nube.';
+      self.olStatus_Print.repaint;
 
     end
     ELSE
@@ -2132,11 +2320,11 @@ begin
       self.cJsonUpdate := self.cJsonUpdate + '"op_numserie_if": "' + TRIM(AHK_FISCAL_LIB.cSerieIMF) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_id":' + TRIM(cOp_id) + ',';
       self.cJsonUpdate := self.cJsonUpdate + '"op_status": "1",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "ERROR DE LA IMPRESORA FISCAL",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_status_det": "Error de la impresora fiscal.",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_test":"' + iif(self.bTest_Mode = True, '1', '0') + '"}';
 
-      self.olStatus_Print.Caption := 'ACTUALZIANDO STATUS DE PROCESADO EN LA NUBE.';
-      self.olStatus_Print.Repaint;
+      self.olStatus_Print.Caption := 'Actualizando estatus de [procesado] en la nube.';
+      self.olStatus_Print.repaint;
     end;
     self.oBtn_Env_DataClick(self);
 
@@ -2146,13 +2334,15 @@ begin
     end
     ELSE if (self.bSendOk = 2) then
     begin
-      ShowMessage('EL DOCUMENTO SE ENTREGO AL SERVIDIOR Y SE RESOPONDIO CON ERROR.');
+      // DialogBoxAutoClose('Alerta','El documento se entregó al servidor y respondió con error.',10);
+      // ShowMessage('El documento se entregó al servidor y respondió con error.');
       oJsonFull := nil;
       EXIT;
     end
     else if (self.bSendOk = -1) then
     begin
-      ShowMessage('NO ES POSIBLE ESTABLECER CONTACTO CON LA NUBE DEL SISTEMA PARA ACTUALZIAR LA FACTURA.');
+      DialogBoxAutoClose('Alerta', 'No es posible establecer contacto con la nube del sistema para actualizar la factura.', 10);
+      // ShowMessage('No es posible establecer contacto con la nube del sistema para actualizar la factura.');
       oJsonFull := nil;
       EXIT;
     end;
@@ -2165,61 +2355,16 @@ begin
   self.oMem_Fac.EmptyTable;
   self.oMem_Det.EmptyTable;
 
-  self.olStatus_Doc.Caption := 'EN ESPERA DE NUEVOS DOCUMENTOS:..';
-  self.olStatus_Error.Repaint;
+  self.olStatus_Doc.Caption := 'En espera de nuevos documentos.';
+  self.olStatus_Doc.repaint;
 
-  self.olStatus_Print.Caption := 'EN ESPERA DE STATUS DE ERRORES:..';
-  self.olStatus_Print.Repaint;
+  self.olStatus_Error.Caption := 'Sin errores.';
+  self.olStatus_Error.repaint;
 
-  self.olStatus_Error.Caption := 'EN ESPERA DEL ESTATUS DE IMPRESORA:..';
-  self.olStatus_Error.Repaint;
+  self.olStatus_Print.Caption := 'En espera del estatus de impresora.';
+  self.olStatus_Print.repaint;
   // self.Enabled := True;
   oJsonFull := nil;
-end;
-
-procedure TfSinco_Main.Hacer_Cierres;
-begin
-  if (self.Try_Open_Port() = True) then
-  begin
-    IF (TRIM(self.oBtn_Cierres.Caption) = 'Cierres Fis.') then
-    begin
-      // self.oBtn_Cierres.Enabled := False;
-      self.olWaitStop.Visible := True;
-      if (self.bTm_work = false) then
-      begin
-        self.oTimeCheck.Enabled := false;
-        self.bStop_Flg := True;
-
-        self.oBtn_Print.Enabled := false;
-        self.oBtn_Minimize.Enabled := false;
-        self.oBtn_CierreX.Enabled := True;
-        self.oBtn_CierreZ.Enabled := True;
-        self.olWaitStop.Visible := false;
-        self.bTm_work := false;
-        self.oBtn_Cierres.Caption := 'Volver M. Normal';
-        self.Cambiar_Semaforo('R');
-      end
-      else
-      begin
-        self.Cambiar_Semaforo('A');
-        self.bStop_Flg := True;
-      end;
-    end
-    else
-    begin
-      self.Cambiar_Semaforo('A');
-
-      self.oBtn_Print.Enabled := True;
-      self.oBtn_Minimize.Enabled := True;
-      self.oBtn_CierreX.Enabled := false;
-      self.oBtn_CierreZ.Enabled := false;
-      self.oBtn_Cierres.Caption := 'Cierres Fis.';
-      // self.oBtn_Cierres.Enabled := True;
-      self.bStop_Flg := false;
-      self.bTm_work := false;
-      self.oTimeCheck.Enabled := True;
-    end;
-  end;
 end;
 
 function TfSinco_Main.Try_Open_Port(): boolean;
@@ -2243,22 +2388,22 @@ begin
   if (cFlag = 'R') then
   begin
     self.oImg_Semaf.Picture.LoadFromFile(self.cRes_Path + '\rojo.png');
-    self.oImg_Semaf.Repaint;
+    self.oImg_Semaf.repaint;
   end
   else if (cFlag = 'V') then
   begin
     self.oImg_Semaf.Picture.LoadFromFile(self.cRes_Path + '\verde.png');
-    self.oImg_Semaf.Repaint;
+    self.oImg_Semaf.repaint;
   end
   else if (cFlag = 'A') then
   begin
     self.oImg_Semaf.Picture.LoadFromFile(self.cRes_Path + '\amarillo.png');
-    self.oImg_Semaf.Repaint;
+    self.oImg_Semaf.repaint;
   end
   else if (cFlag = 'S') then
   begin
     self.oImg_Semaf.Picture.LoadFromFile(self.cRes_Path + '\icons8_stop_sign_32.png');
-    self.oImg_Semaf.Repaint;
+    self.oImg_Semaf.repaint;
   end;
 
 end;
@@ -2269,15 +2414,159 @@ begin
   begin
     self.oWait_Image.Picture.LoadFromFile(self.cRes_Path + '\stopwatch_32.png');
     self.oWait_Image.Visible := True;
-    self.oWait_Image.Repaint;
+    self.oWait_Image.repaint;
     sleep(500);
 
   end
   else if (cFlag = 'OFF') then
   begin
     self.oWait_Image.Visible := false;
-    self.oWait_Image.Repaint;
+    self.oWait_Image.repaint;
   end;
+end;
+
+procedure TfSinco_Main.DialogBoxAutoClose(const ACaption, APrompt: string; DuracaoEmSegundos: integer);
+var
+  Form: TForm;
+  Prompt: TLabel;
+  DialogUnits: TPoint;
+  ButtonTop, ButtonWidth, ButtonHeight: integer;
+  nX, Lines: integer;
+
+  function GetAveCharSize(Canvas: TCanvas): TPoint;
+  var
+    I: integer;
+    Buffer: array [0 .. 51] of Char;
+  begin
+    for I := 0 to 25 do
+      Buffer[I] := chr(I + ord('A'));
+    for I := 0 to 25 do
+      Buffer[I + 26] := chr(I + ord('a'));
+    GetTextExtentPoint(Canvas.Handle, Buffer, 52, TSize(result));
+    result.X := result.X div 52;
+  end;
+
+begin
+  Form := TForm.Create(application);
+  Lines := 0;
+
+  For nX := 1 to Length(APrompt) do
+    if APrompt[nX] = #13 then
+      inc(Lines);
+
+  with Form do
+    try
+      Font.Name := 'Arial'; // mcg
+      Font.Size := 10; // mcg
+      Font.Style := [fsBold];
+      Canvas.Font := Font;
+      DialogUnits := GetAveCharSize(Canvas);
+      // BorderStyle    := bsDialog;
+      BorderStyle := bsToolWindow;
+      FormStyle := fsStayOnTop;
+      BorderIcons := [];
+      Caption := ACaption;
+      ClientWidth := MulDiv(Screen.Width div 4, DialogUnits.X, 4);
+      ClientHeight := MulDiv(23 + (Lines * 10), DialogUnits.Y, 8);
+      Position := poScreenCenter;
+
+      Prompt := TLabel.Create(Form);
+      with Prompt do
+      begin
+        Parent := Form;
+        AutoSize := True;
+        Left := MulDiv(8, DialogUnits.X, 4);
+        Top := MulDiv(8, DialogUnits.Y, 8);
+        Caption := APrompt;
+      end;
+
+      Form.Width := Prompt.Width + Prompt.Left + 50; // mcg fix
+
+      Show;
+      application.ProcessMessages;
+    finally
+      sleep(DuracaoEmSegundos * 1000);
+      Form.Free;
+    end;
+end;
+
+procedure TfSinco_Main.Desactiva_Botones(iOption: integer = 0);
+begin
+  if ((iOption = 0) or (iOption = 1)) then
+  begin
+    self.oBtn_Detener.Enabled := false;
+    self.oBtn_Detener.repaint;
+  end;
+
+  if ((iOption = 0) or (iOption = 2)) then
+  begin
+    self.oBtn_CierreX.Enabled := false;
+    self.oBtn_CierreX.repaint;
+    self.oBtn_CierreZ.Enabled := false;
+    self.oBtn_CierreZ.repaint;
+  end;
+
+  if ((iOption = 0) or (iOption = 3)) then
+  begin
+    if (self.oTab_Sett_01.tabvisible = True) then
+    begin
+      self.oTab_Sett_01.Enabled := false;
+      self.oTab_Sett_01.repaint;
+    end;
+    if (self.oTab_Sett_02.tabvisible = True) then
+    begin
+      self.oTab_Sett_02.Enabled := false;
+      self.oTab_Sett_02.repaint;
+    end;
+  end;
+  if ((iOption = 0) or (iOption = 4)) then
+  begin
+    self.SoporteTcnico1.Enabled := false;
+  end;
+  if ((iOption = 0) or (iOption = 5)) then
+    self.oBtn_Minimize.Enabled := false;
+  if ((iOption = 0) or (iOption = 6)) then
+    self.oBtn_quit.Enabled := false;
+end;
+
+procedure TfSinco_Main.Activa_Botones(iOption: integer = 0);
+begin
+  if ((iOption = 0) or (iOption = 1)) then
+  begin
+    self.oBtn_Detener.Enabled := True;
+    self.oBtn_Detener.repaint;
+  end;
+
+  if ((iOption = 0) or (iOption = 2)) then
+  begin
+    self.oBtn_CierreX.Enabled := True;
+    self.oBtn_CierreX.repaint;
+    self.oBtn_CierreZ.Enabled := True;
+    self.oBtn_CierreZ.repaint;
+  end;
+
+  if ((iOption = 0) or (iOption = 3)) then
+  begin
+    if (self.oTab_Sett_01.tabvisible = True) then
+    begin
+      self.oTab_Sett_01.Enabled := True;
+      self.oTab_Sett_01.repaint;
+    end;
+    if (self.oTab_Sett_02.tabvisible = True) then
+    begin
+      self.oTab_Sett_02.Enabled := True;
+      self.oTab_Sett_02.repaint;
+    end;
+  end;
+
+  if ((iOption = 0) or (iOption = 4)) then
+  begin
+    //self.SoporteTcnico1.Enabled := True;
+  end;
+  if ((iOption = 0) or (iOption = 5)) then
+    self.oBtn_Minimize.Enabled := True;
+  if ((iOption = 0) or (iOption = 6)) then
+    self.oBtn_quit.Enabled := True;
 end;
 
 end.
