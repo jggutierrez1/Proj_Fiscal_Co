@@ -7,21 +7,16 @@ uses
   System.Classes, Vcl.Graphics, System.UITypes,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.AppEvnts, Vcl.ExtCtrls,
   Vcl.ComCtrls, Vcl.StdCtrls, ShellApi,
-  Vcl.Buttons, Vcl.Mask, Vcl.DBCtrls,
-  DBCtrlsEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh,
-  DBAxisGridsEh, DBGridEh,
-  ZAbstractTable, ZDataset, Data.DB, ZAbstractRODataset, ZAbstractDataset, ZAbstractConnection, ZConnection,
+  Vcl.Buttons,
   AHK_FISCAL_LIB,
   REST.Types, REST.Client, REST.Authenticator.Simple, REST.Authenticator.OAuth,
-  Data.Bind.Components, Data.Bind.ObjectScope, SynEditHighlighter, SynHighlighterJSON, SynEdit, SynMemo,
-  SuperObject, MemTableDataEh, MemTableEh, Vcl.Menus, IdIntercept, IdIOHandler,
-  IdIOHandlerSocket, IdIOHandlerStack, IdBaseComponent, IdComponent,
-  IdTCPConnection, IdTCPClient, System.Net.URLClient, System.Net.HttpClient,
-  System.Net.HttpClientComponent, Vcl.Imaging.pngimage, PngBitBtn,
-  Vcl.BaseImageCollection, Vcl.ImageCollection, System.ImageList, Vcl.ImgList,
-  dxGDIPlusClasses, Vcl.onguard, Vcl.ogutil, inifiles, cxGraphics, cxControls,
-  cxLookAndFeels, cxLookAndFeelPainters, cxContainer, cxEdit, dxSkinsCore,
-  dxSkinsDefaultPainters, cxImage;
+  SuperObject, MemTableDataEh, MemTableEh, Vcl.Menus,
+  Vcl.Imaging.pngimage, PngBitBtn,
+  dxGDIPlusClasses, Vcl.onguard, Vcl.ogutil, inifiles, wininet, Data.DB,
+  cxGraphics, cxControls, cxLookAndFeels, cxLookAndFeelPainters, cxContainer,
+  cxEdit, dxSkinsCore, dxSkinsDefaultPainters, cxImage, DBCtrlsEh, Vcl.Mask,
+  Data.Bind.Components, Data.Bind.ObjectScope, SynEditHighlighter,
+  SynHighlighterJSON, SynEdit, SynMemo, ComObj;
 
 type
   TfSinco_Main = class(TForm)
@@ -52,16 +47,13 @@ type
     Label3: TLabel;
     oTimeCheck: TTimer;
     oTab_Sett_02: TTabSheet;
-    SynJSONSyn1: TSynJSONSyn;
     PageControl2: TPageControl;
     TabSheet7: TTabSheet;
-    oHttp_Result2: TSynMemo;
     Label6: TLabel;
-    oHttp_Server_Data: TEdit;
+    oHttp_Server: TEdit;
     RESTClient2: TRESTClient;
     RESTRequest2: TRESTRequest;
     RESTResponse2: TRESTResponse;
-    ZConnection1: TZConnection;
     oMem_Fac: TMemTableEh;
     oMem_Det: TMemTableEh;
     oMem_Facop_fecha: TDateTimeField;
@@ -144,21 +136,11 @@ type
     Label15: TLabel;
     otVerifEsp_Stat_try: TDBNumberEditEh;
     otVerifEsp_Erro_try: TDBNumberEditEh;
-    Label16: TLabel;
-    Label17: TLabel;
-    Label18: TLabel;
     Label19: TLabel;
     otVerifFin_Stat_Int: TDBNumberEditEh;
     Label20: TLabel;
     Label21: TLabel;
     otVerifFin_Stat_try: TDBNumberEditEh;
-    Label22: TLabel;
-    Label23: TLabel;
-    otVerifFin_Erro_Int: TDBNumberEditEh;
-    Label24: TLabel;
-    Label25: TLabel;
-    otVerifFin_Erro_try: TDBNumberEditEh;
-    Label26: TLabel;
     oTrayIconMenu: TPopupMenu;
     MostrarMFF1: TMenuItem;
     N1: TMenuItem;
@@ -170,9 +152,9 @@ type
     oImg_Semaf: TImage;
     oCk_Test_Mode: TCheckBox;
     Label1: TLabel;
-    oHttp_Server_Empr: TEdit;
+    oHttp_Empr: TEdit;
     Label4: TLabel;
-    oHttp_Server_Sucu: TEdit;
+    oHttp_Sucu: TEdit;
     oMem_Facop_subtotalnet: TFloatField;
     oMem_Facop_suc_id: TIntegerField;
     oMem_Facop_test: TIntegerField;
@@ -220,7 +202,6 @@ type
     oBtn_Status: TPngBitBtn;
     Label33: TLabel;
     Label34: TLabel;
-    Label38: TLabel;
     oCk_sw_manual: TDBCheckBoxEh;
     Label39: TLabel;
     oIntentos_no_recibe: TDBNumberEditEh;
@@ -232,6 +213,20 @@ type
     Label43: TLabel;
     Label42: TLabel;
     cxImage1: TcxImage;
+    oHttp_Result2: TSynMemo;
+    SynJSONSyn1: TSynJSONSyn;
+    Label38: TLabel;
+    Label16: TLabel;
+    oHttp_API_Put: TEdit;
+    Label17: TLabel;
+    oHttp_API_Get: TEdit;
+    Label18: TLabel;
+    Label22: TLabel;
+    Label26: TLabel;
+    Label23: TLabel;
+    Label24: TLabel;
+    Label25: TLabel;
+    Label44: TLabel;
     procedure TrayIcon1DblClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure oBtn_Probar_CnnClick(Sender: TObject);
@@ -287,6 +282,12 @@ type
     procedure Desactiva_Botones(iOption: integer = 0);
     procedure oBtn_DetenerClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure RESTClient2HTTPProtocolError(Sender: TCustomRESTClient);
+    procedure RESTClient3HTTPProtocolError(Sender: TCustomRESTClient);
+    Function CheckUrl(pUrl: string; bShowError: boolean): integer;
+    procedure ParseURL(const url: AnsiString; var Scheme, user, pass, host, port, path, extra: AnsiString);
+    function Build_url_put(): string;
+    function Build_url_get(): string;
   private
     { Private declarations }
     cSerial_Working: string;
@@ -299,8 +300,11 @@ type
     iShoiceAct: integer;
     cRes_Path: string;
     iBusq_Ndata: integer;
-    bPrueba_op: boolean;
+    bNo_Imprime: boolean;
     cApp, cFPath, cPath, cExeF: string;
+    bRESTRequest2_Err: boolean;
+    bRESTRequest3_Err: boolean;
+    cHttp_Error: Widestring;
   public
     { Public declarations }
   end;
@@ -699,12 +703,10 @@ var
   jValue1: TJSONValue;
   // iStatusCode: integer;
   cPrepUrl: string;
-  cUrlBase: string;
-  cparEmpr: string;
-  cParSucu: string;
   iCodigo: integer;
   cDetall: string;
 begin
+self.bSendOk := 0;
   if (TRIM(self.cJsonUpdate) = '') then
   begin
     DialogBoxAutoClose('Alerta', 'JSON de actualización vacío.', 10);
@@ -715,10 +717,15 @@ begin
 
   // self.cJsonUpdate :='{"op_emp_id": "1","op_suc_id": "0","op_num_corre": "2002002010","op_num_ncf": "00000362","op_num_nco": "00000362","op_numserie_if": "TFDM110000835","op_id": 411538,"op_status": "1","op_status_det" : "Todo Bien","op_test" : 1}';
 
-  cUrlBase := TRIM(self.oHttp_Server_Data.Text);
-  cparEmpr := TRIM(self.oHttp_Server_Empr.Text);
-  cParSucu := TRIM(self.oHttp_Server_Sucu.Text);
-  cPrepUrl := cUrlBase + '/DocumentosImpresos';
+  cPrepUrl := self.Build_url_put();
+   utiles.LogToFile('URL : ' +TRIM(cPrepUrl), ExtractFilePath(application.ExeName) + '\JSON_SEND.LOG');
+   utiles.LogToFile('JSON: ' +TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\JSON_SEND.LOG');
+  //if (self.CheckUrl(cPrepUrl, false) >= 300) then
+  //begin
+  //  utiles.LogToFile('POST-DATA: ' + self.cHttp_Error, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
+  //  self.bSendOk := -1;
+  //  EXIT;
+  //end;
 
   TRY
     self.RESTClient3.BaseURL := TRIM(cPrepUrl);
@@ -827,10 +834,13 @@ begin
 
   utiles.WriteIniFacilValue('TIMER_AFTER_PRINT', 'TIME_STATUS_SECONDS', 'I', self.otVerifFin_Stat_Int.Value);
   utiles.WriteIniFacilValue('TIMER_AFTER_PRINT', 'TIME_STATUS_INTENTS', 'I', self.otVerifFin_Stat_try.Value);
-  utiles.WriteIniFacilValue('TIMER_AFTER_PRINT', 'TIME_ERROR_SECONDS', 'I', self.otVerifFin_Erro_Int.Value);
-  utiles.WriteIniFacilValue('TIMER_AFTER_PRINT', 'TIME_ERROR_INTENTS', 'I', self.otVerifFin_Erro_try.Value);
 
-  utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'HOST_URL', 'S', self.oHttp_Server_Data.Text);
+  // utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'HOST_URL', 'S', self.oHttp_Server.Text);
+  utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'URL_BASE', 'S', self.oHttp_Server.Text);
+  utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'API_GET', 'S', self.oHttp_API_Get.Text);
+  utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'API_PUT', 'S', self.oHttp_API_Put.Text);
+  utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'HOST_EMP', 'S', self.oHttp_Empr.Text);
+  utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'HOST_suc', 'S', self.oHttp_Sucu.Text);
   utiles.WriteIniFacilValue('HTTP_SERVER_DATA', 'JSONDATA', 'S', '');
 
   utiles.WriteIniFacilValue('GENERAL', 'TEST_MODE', 'B', self.bTest_Mode);
@@ -844,31 +854,65 @@ End;
 
 procedure TfSinco_Main.oBtn_Sol_DataClick(Sender: TObject);
 var
+  oResponse: ISuperObject;
   jValue2: TJSONValue;
   cJsonResult: Widestring;
   FMessage: string;
   cPrepUrl: string;
-  cUrlBase: string;
-  cparEmpr: string;
-  cParSucu: string;
   cValues: string;
+  cScheme, cuser, cpass, chost, cport, cPath, cextra: AnsiString;
 begin
   FMessage := '';
   self.Clear_Objects();
-
   self.oBtn_Sol_Data.Enabled := false;
-  cUrlBase := TRIM(self.oHttp_Server_Data.Text);
-  cparEmpr := TRIM(self.oHttp_Server_Empr.Text);
-  cParSucu := TRIM(self.oHttp_Server_Sucu.Text);
 
-  cPrepUrl := cUrlBase + '/DocumentosPendientes/' + cparEmpr + '/' + cParSucu + '?test=' + utiles.iif(self.oCk_Test_Mode.Checked = True, '1', '0');
+  if (utiles.CheckInternet() = false) then
+  begin
+    if (self.PageControl1.activepage = oTab_Sett_02) then
+      messagedlg('Error de comunicación/internet.', mtInformation, [mbOK], 0);
+    self.oBtn_Sol_Data.Enabled := True;
+    // self.Activa_Botones(0);
+    self.bNo_Imprime := false;
+    EXIT;
+  end;
+
+  cPrepUrl := self.Build_url_get();
+  if (self.CheckUrl(cPrepUrl, false) >= 300) then
+  begin
+    utiles.LogToFile('POST-DATA: ' + self.cHttp_Error, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
+
+    self.bNo_Imprime := True;
+
+    if (self.PageControl1.activepage = oTab_Sett_02) then
+      messagedlg(self.cHttp_Error, mtInformation, [mbOK], 0);
+    self.oBtn_Sol_Data.Enabled := True;
+    // self.Activa_Botones(0);
+    self.bNo_Imprime := false;
+    EXIT;
+  end;
+
   try
+    self.bRESTRequest2_Err := false;
     self.RESTClient2.BaseURL := cPrepUrl;
     self.RESTRequest2.Params.Clear;
     self.RESTRequest2.Execute;
     jValue2 := self.RESTResponse2.JsonValue;
-    cJsonResult := jValue2.ToString;
+    self.oHttp_Result2.Text := cJsonResult;
+
+    if (self.bRESTRequest2_Err = True) then
+    begin
+      self.olStatus_Doc.Caption := 'Error de comunicasion con el servidor.';
+      self.olStatus_Doc.Refresh;
+
+      cJsonResult := '{"print_list":[]}';
+    end
+    else
+    begin
+      jValue2 := self.RESTResponse2.JsonValue;
+      cJsonResult := jValue2.ToString;
+    end;
   except
+    on e: Exception do
     begin
       utiles.LogToFile('POST-DATA: ' + IntToStr(RESTResponse2.StatusCode) + ':' + RESTResponse2.StatusText, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
       cJsonResult := '{"print_list":{"fact_cabs":[],"fact_dets":{}}}';
@@ -895,6 +939,9 @@ end;
 
 procedure TfSinco_Main.Clear_Objects();
 begin
+  self.RESTRequest3.ClearBody;
+  // self.RESTRequest3.Params.Clear;
+
   self.RESTRequest2.ClearBody;
   self.RESTRequest2.Params.Clear;
   self.oHttp_Result2.Text := '';
@@ -917,6 +964,7 @@ end;
 procedure TfSinco_Main.oCk_Test_ModeClick(Sender: TObject);
 begin
   self.bTest_Mode := self.oCk_Test_Mode.Checked;
+  self.bNo_Imprime := self.oCk_Test_Mode.Checked;
 end;
 
 procedure TfSinco_Main.OgDaysCode1ChangeCode(Sender: TObject; Code: TCode);
@@ -928,7 +976,7 @@ begin
   IniFile := TIniFile.Create(cFileName);
   try
     S := BufferToHex(Code, SizeOf(Code));
-    IniFile.WriteString('Keys', 'Definiction_Vals_Keys', S);
+    IniFile.WriteString('Keys', 'key_app', S);
   finally
     IniFile.Free;
   end;
@@ -990,7 +1038,7 @@ begin
   cFileName := ExtractFilePath(application.ExeName) + '\BASICVALUES.INI';
   IniFile := TIniFile.Create(cFileName);
   try
-    S := IniFile.ReadString('Keys', 'Definiction_Vals_Keys', '');
+    S := IniFile.ReadString('Keys', 'key_app', '');
     HexToBuffer(S, Code, SizeOf(Code));
   finally
     IniFile.Free;
@@ -999,7 +1047,7 @@ end;
 
 procedure TfSinco_Main.OgDaysCode1GetKey(Sender: TObject; var Key: TKey);
 const
-  cKey_Value: TKey = ($4B, $9F, $60, $EF, $1F, $C8, $03, $3B, $9A, $2C, $2A, $16, $2C, $20, $D9, $50);
+  cKey_Value: TKey = ($0E, $29, $80, $B1, $9B, $92, $DD, $0A, $2D, $65, $1B, $43, $0E, $C0, $EF, $19);
 begin
   Key := cKey_Value;
 end;
@@ -1011,12 +1059,12 @@ begin
     if (self.oParam_Impr.Checked = True) then
     begin
       self.oTab_Sett_01.tabvisible := True;
-      self.PageControl1.activePage := self.oTab_Sett_01;
+      self.PageControl1.activepage := self.oTab_Sett_01;
     end
     else
     begin
       self.oTab_Sett_01.tabvisible := false;
-      self.PageControl1.activePage := self.oTab_Main;
+      self.PageControl1.activepage := self.oTab_Main;
     end;
   end;
 end;
@@ -1028,12 +1076,12 @@ begin
     if (self.oParam_Serv.Checked = True) then
     begin
       self.oTab_Sett_02.tabvisible := True;
-      self.PageControl1.activePage := self.oTab_Sett_02;
+      self.PageControl1.activepage := self.oTab_Sett_02;
     end
     else
     begin
       self.oTab_Sett_02.tabvisible := false;
-      self.PageControl1.activePage := self.oTab_Main;
+      self.PageControl1.activepage := self.oTab_Main;
     end;
   end;
 end;
@@ -1053,7 +1101,7 @@ begin
   self.PageControl3.repaint;
   self.oTab_Rang_Fech.Enabled := false;
 
-  if (bPrueba_op = false) then
+  if (self.bNo_Imprime = false) then
   begin
     self.Reimprime_Por_Rango;
   end
@@ -1144,7 +1192,7 @@ begin
   self.PageControl3.repaint;
   self.oTab_Rang_Corr.Enabled := false;
 
-  if (bPrueba_op = false) then
+  if (self.bNo_Imprime = false) then
   begin
     self.Reimprime_Por_Fecha;
   end
@@ -1252,7 +1300,12 @@ begin
 end;
 
 procedure TfSinco_Main.oTimeCheckTimer(Sender: TObject);
+var
+  cPrepUrl: string;
 begin
+  bRESTRequest2_Err := false;
+  bRESTRequest3_Err := false;
+
   self.bTm_work := True;
   self.oTimeCheck.Enabled := false;
 
@@ -1263,15 +1316,34 @@ begin
 
   if (utiles.CheckInternet() = false) then
   begin
-    self.Cambiar_Semaforo('A');
+    utiles.LogToFile('POST-DATA: Se perdió la comunicación con el internet. En espera de conexión.', ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
 
-    self.olStatus_Error.Caption := 'Se perdió la comunicación con el internet. En espera de conexión.';
-    self.olStatus_Error.Color := $000000B3;
-    self.olStatus_Error.repaint;
+    self.Cambiar_Semaforo('A');
+    self.olStatus_Doc.Caption := 'Se perdió la comunicación con el internet. En espera de conexión.';
+    self.olStatus_Doc.Color := $000000B3;
+    self.olStatus_Doc.repaint;
     self.bTm_work := false;
     self.oTimeCheck.Enabled := True;
     self.oBtn_Detener.Enabled := True;
     self.oBtn_Detener.repaint;
+    self.Activa_Botones(0);
+    EXIT;
+  end;
+
+  cPrepUrl := self.Build_url_get();
+  if (self.CheckUrl(cPrepUrl, false) >= 300) then
+  begin
+    utiles.LogToFile('POST-DATA: ' + self.cHttp_Error, ExtractFilePath(application.ExeName) + '\HTTP_ERROR.LOG');
+
+    self.Cambiar_Semaforo('A');
+    self.olStatus_Doc.Caption := self.cHttp_Error;
+    self.olStatus_Doc.Color := $000000B3;
+    self.olStatus_Doc.repaint;
+    self.bTm_work := false;
+    self.oTimeCheck.Enabled := True;
+    self.oBtn_Detener.Enabled := True;
+    self.oBtn_Detener.repaint;
+    self.Activa_Botones(0);
     EXIT;
   end;
 
@@ -1325,7 +1397,7 @@ begin
 
   self.Cambiar_Semaforo('R');
 
-  if (bPrueba_op = false) then
+  if (self.bNo_Imprime = false) then
   begin
     self.Cargar_Fact();
   end
@@ -1360,7 +1432,12 @@ var
   oMyIcon: TIcon;
   cPassword: string;
 begin
-  self.bPrueba_op := false;
+  self.cHttp_Error := '';
+
+  bRESTRequest2_Err := false;
+  bRESTRequest3_Err := false;
+
+  self.bNo_Imprime := false;
   self.cPath := ExtractFilePath(application.ExeName);
   self.cExeF := 'pskill.exe';
   self.cFPath := self.cPath + '\pskill.exe';
@@ -1405,15 +1482,13 @@ begin
 
   self.otVerifEsp_Stat_Int.Value := utiles.Read_IniFacilValue('TIMER_BEFORE_PRINT', 'TIME_STATUS_SECONDS', 'I', 3);
   self.otVerifEsp_Stat_try.Value := utiles.Read_IniFacilValue('TIMER_BEFORE_PRINT', 'TIME_STATUS_INTENTS', 'I', 10);
+  self.otVerifFin_Stat_Int.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_STATUS_SECONDS', 'I', 3);
+  self.otVerifFin_Stat_try.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_STATUS_INTENTS', 'I', 20);
+
   self.otVerifEsp_Erro_Int.Value := utiles.Read_IniFacilValue('TIMER_BEFORE_PRINT', 'TIME_ERROR_SECONDS', 'I', 3);
   self.otVerifEsp_Erro_try.Value := utiles.Read_IniFacilValue('TIMER_BEFORE_PRINT', 'TIME_ERROR_INTENTS', 'I', 10);
 
-  self.otVerifFin_Stat_Int.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_STATUS_SECONDS', 'I', 3);
-  self.otVerifFin_Stat_try.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_STATUS_INTENTS', 'I', 20);
-  self.otVerifFin_Erro_Int.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_ERROR_SECONDS', 'I', 3);
-  self.otVerifFin_Erro_try.Value := utiles.Read_IniFacilValue('TIMER_AFTER_PRINT', 'TIME_ERROR_INTENTS', 'I', 10);
-
-  self.oCk_sw_manual.Checked := utiles.Read_IniFacilValue('TIMER_BEFORE_MANUAL', 'ACTIVE', 'B', true);
+  self.oCk_sw_manual.Checked := utiles.Read_IniFacilValue('TIMER_BEFORE_MANUAL', 'ACTIVE', 'B', True);
   self.oIntentos_no_recibe.Value := utiles.Read_IniFacilValue('TIMER_BEFORE_MANUAL', 'VALUE', 'I', 30);
 
   self.bTest_Mode := utiles.Read_IniFacilValue('GENERAL', 'TEST_MODE', 'B', false);
@@ -1425,15 +1500,19 @@ begin
 
   self.oHttp_Result2.Text := '';
 
-  self.oHttp_Server_Data.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'HOST_URL', 'S', '');
-  self.oHttp_Server_Empr.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'HOST_EMP', 'S', '');
-  self.oHttp_Server_Sucu.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'HOST_suc', 'S', '');
+  // self.oHttp_Server.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'HOST_URL', 'S', '');
+
+  self.oHttp_Server.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'URL_BASE', 'S', '');
+  self.oHttp_API_Get.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'API_GET', 'S', '');
+  self.oHttp_API_Put.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'API_PUT', 'S', '');
+  self.oHttp_Empr.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'HOST_EMP', 'S', '');
+  self.oHttp_Sucu.Text := utiles.Read_IniFacilValue('HTTP_SERVER_DATA', 'HOST_suc', 'S', '');
 
   self.oTimeCheck.Interval := (self.oTimeVerif.Value * 1000);
   self.oTimeCheck.Enabled := false;
   self.oTab_Sett_01.tabvisible := false;
   self.oTab_Sett_02.tabvisible := false;
-  self.PageControl1.activePage := self.oTab_Main;
+  self.PageControl1.activepage := self.oTab_Main;
 end;
 
 procedure TfSinco_Main.FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
@@ -1444,15 +1523,15 @@ begin
     begin
       if (Key = VK_F10) then
       begin
-        if (self.SoporteTcnico1.enabled = True) then
+        if (self.SoporteTcnico1.Enabled = True) then
         begin
-          //self.N2.Visible := false;
-          self.SoporteTcnico1.enabled := false;
+          // self.N2.Visible := false;
+          self.SoporteTcnico1.Enabled := false;
         end
         ELSE
         begin
-          //self.N2.Visible := True;
-          self.SoporteTcnico1.enabled := True;
+          // self.N2.Visible := True;
+          self.SoporteTcnico1.Enabled := True;
         end;
         Key := 0;
       end;
@@ -1670,8 +1749,27 @@ begin
   utiles.WaitEnd;
 end;
 
+procedure TfSinco_Main.RESTClient2HTTPProtocolError(Sender: TCustomRESTClient);
+begin
+  self.bRESTRequest2_Err := True;
+  self.olStatus_Error.Caption := 'Hubo un error al tratar de realizar la conexión con el servidor.';
+  self.olStatus_Error.Color := $000000B3;
+  self.olStatus_Error.Refresh;
+  utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\HTTP_SEND_ERROR.LOG');
+end;
+
+procedure TfSinco_Main.RESTClient3HTTPProtocolError(Sender: TCustomRESTClient);
+begin
+  self.bRESTRequest3_Err := True;
+  self.olStatus_Error.Caption := 'Hubo un error al tratar de realizar el envio al servidor.';
+  self.olStatus_Error.Color := $000000B3;
+  self.olStatus_Error.Refresh;
+  utiles.LogToFile(TRIM(self.cJsonUpdate), ExtractFilePath(application.ExeName) + '\HTTP_SEND_ERROR.LOG');
+end;
+
 procedure TfSinco_Main.RESTRequest2HTTPProtocolError(Sender: TCustomRESTRequest);
 begin
+  self.bRESTRequest2_Err := True;
   self.olStatus_Error.Caption := 'Hubo un error al tratar de recuperar lo datos.';
   self.olStatus_Error.Color := $000000B3;
   self.olStatus_Error.Refresh;
@@ -1680,6 +1778,7 @@ end;
 
 procedure TfSinco_Main.RESTRequest3HTTPProtocolError(Sender: TCustomRESTRequest);
 begin
+  self.bRESTRequest3_Err := True;
   self.olStatus_Error.Caption := 'Hubo un error al tratar de realizar él envió.';
   self.olStatus_Error.Color := $000000B3;
   self.olStatus_Error.Refresh;
@@ -1736,7 +1835,7 @@ begin
   self.oTab_Sett_02.tabvisible := false;
   self.PageControl1.repaint;
 
-  if (bPrueba_op = false) then
+  if (self.bNo_Imprime = false) then
   begin
     self.oBtn_Probar_CnnClick(self);
     AHK_FISCAL_LIB.CloseFpctrl();
@@ -1797,7 +1896,7 @@ begin
   self.oTab_Sett_02.tabvisible := false;
   self.PageControl1.repaint;
 
-  if (bPrueba_op = false) then
+  if (self.bNo_Imprime = false) then
   begin
     self.oBtn_Probar_CnnClick(self);
     AHK_FISCAL_LIB.CloseFpctrl();
@@ -2166,8 +2265,8 @@ begin
       'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.', 10);
     // ShowMessage('Se detectó un error en la descripción de los productos del documento.' + #13 + 'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.');
     self.cJsonUpdate := '';
-    self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
-    self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+    self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Empr.Text) + '",';
+    self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Sucu.Text) + '",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
     self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
@@ -2212,8 +2311,8 @@ begin
         'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.', 10);
       // ShowMessage('Se detectó un error en la descripción de los productos del documento.' + #13 + 'Se cancelará la impresión de nuevos documentos por error de la impresora fiscal.');
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Sucu.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(self.oMem_Fac.FieldByName('op_num_corre').AsString) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
@@ -2235,8 +2334,8 @@ begin
       // self.Enabled := True;
 
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Sucu.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
@@ -2260,8 +2359,8 @@ begin
       // self.Enabled := True;
 
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Sucu.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
@@ -2294,8 +2393,8 @@ begin
     if (self.Verifica_Error_Imp() = false) then
     begin
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Sucu.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "' + AHK_FISCAL_LIB.cOFG_Num_NCF + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "' + AHK_FISCAL_LIB.cOFG_Num_COO + '",';
@@ -2312,8 +2411,8 @@ begin
     ELSE
     begin
       self.cJsonUpdate := '';
-      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Server_Empr.Text) + '",';
-      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Server_Sucu.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '{"op_emp_id":"' + TRIM(self.oHttp_Empr.Text) + '",';
+      self.cJsonUpdate := self.cJsonUpdate + '"op_suc_id":"' + TRIM(self.oHttp_Sucu.Text) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_corre": "' + TRIM(AHK_FISCAL_LIB.cOFG_Num_corre) + '",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_ncf": "",';
       self.cJsonUpdate := self.cJsonUpdate + '"op_num_nco": "",';
@@ -2561,12 +2660,129 @@ begin
 
   if ((iOption = 0) or (iOption = 4)) then
   begin
-    //self.SoporteTcnico1.Enabled := True;
+    // self.SoporteTcnico1.Enabled := True;
   end;
   if ((iOption = 0) or (iOption = 5)) then
     self.oBtn_Minimize.Enabled := True;
   if ((iOption = 0) or (iOption = 6)) then
     self.oBtn_quit.Enabled := True;
+end;
+
+procedure TfSinco_Main.ParseURL(const url: AnsiString; var Scheme, user, pass, host, port, path, extra: AnsiString);
+var
+  resto, tmp: AnsiString;
+begin
+  {
+    http://login:password@somehost.somedomain.com:8080/some_path/something_else.html?param1=val&param2=val#nose
+    \__/   \___/ \______/ \_____________________/ \__/\____________________________/ \___________________/ \__/
+    |       |      |               |               |                |                        |              |
+    Scheme Username Password       Host            Port             Path                    Query         Fragment
+  }
+
+  Scheme := '';
+  user := '';
+  pass := '';
+  host := '';
+  port := '';
+  path := '';
+  extra := '';
+
+  resto := url;
+  Scheme := COPY(resto, 1, pos('://', resto) - 1);
+  resto := COPY(resto, pos('://', resto) + Length('://'), maxint);
+
+  tmp := COPY(resto, 1, pos('@', resto) - 1);
+  if tmp <> '' then
+  begin
+    // tiene user y pass
+    user := COPY(tmp, 1, pos(':', tmp) - 1);
+    pass := COPY(tmp, pos(':', tmp) + 1, maxint);
+    resto := COPY(resto, pos('@', resto) + 1, maxint);
+  end;
+
+  tmp := COPY(resto, 1, pos(':', resto) - 1);
+  if tmp <> '' then
+  begin
+    // trae puerto
+    host := tmp;
+    port := COPY(resto, pos(':', resto) + 1, pos('/', resto) - 1);
+    resto := COPY(resto, pos('/', resto) + 1, maxint);
+  end
+  else
+  begin
+    // no trae puerto
+    host := COPY(resto, 1, pos('/', resto) - 1);
+    resto := COPY(resto, pos('/', resto) + 1, maxint);
+  end;
+
+  tmp := COPY(resto, 1, pos('?', resto) - 1);
+  if tmp <> '' then
+  begin
+    // trae param
+    path := tmp;
+    extra := COPY(resto, pos('?', resto) + 1, maxint);
+
+  end
+  else
+  begin
+    path := resto;
+    extra := '';
+  end;
+
+end;
+
+Function TfSinco_Main.CheckUrl(pUrl: string; bShowError: boolean): integer;
+var
+  oHttp: variant;
+begin
+  self.cHttp_Error := '';
+  oHttp := createoleobject('WinHttp.WinHttpRequest.5.1');
+  oHttp.Open('GET', pUrl, false);
+  oHttp.send;
+  self.cHttp_Error := IntToStr(oHttp.Status) + ' ' + oHttp.StatusText;
+
+  if ((oHttp.Status <> 200) and (bShowError = True)) then
+  begin
+    ShowMessage(IntToStr(oHttp.Status) + ' ' + oHttp.StatusText);
+  end;
+  result := oHttp.Status
+end;
+
+function TfSinco_Main.Build_url_get(): string;
+var
+  cUrl_Bas: string;
+  cAPI_Get: string;
+  cparEmpr: string;
+  cParSucu: string;
+  cUrl_Str: string;
+begin
+  cUrl_Bas := TRIM(self.oHttp_Server.Text);
+  cAPI_Get := TRIM(self.oHttp_API_Get.Text);
+  cparEmpr := TRIM(self.oHttp_Empr.Text);
+  cParSucu := TRIM(self.oHttp_Sucu.Text);
+
+  // cPrepUrl := cUrlBase + '/DocumentosPendientes/' + cparEmpr + '/' + cParSucu + '?test=' + utiles.iif(self.oCk_Test_Mode.Checked = True, '1', '0');
+  cUrl_Str := '';
+  cUrl_Str := cUrl_Str + cUrl_Bas + '/' + cAPI_Get;
+  cUrl_Str := cUrl_Str + utiles.iif(TRIM(cparEmpr) <> '', '/' + cparEmpr, '');
+  cUrl_Str := cUrl_Str + utiles.iif(TRIM(cParSucu) <> '', '/' + cParSucu, '');
+  cUrl_Str := cUrl_Str + '?test=' + utiles.iif(self.oCk_Test_Mode.Checked = True, '1', '0');
+  utiles.LogToFile('URL GET:' + cUrl_Str, ExtractFilePath(application.ExeName) + '\JSON_GET.LOG');
+  result := cUrl_Str;
+end;
+
+function TfSinco_Main.Build_url_put(): string;
+var
+  cUrl_Bas: string;
+  cAPI_Put: string;
+  cUrl_Str: string;
+begin
+  cUrl_Bas := TRIM(self.oHttp_Server.Text);
+  cAPI_Put := TRIM(self.oHttp_API_Put.Text);
+  cUrl_Str := cUrl_Bas + '/' + cAPI_Put;
+  utiles.LogToFile('URL PUT:' + cUrl_Str, ExtractFilePath(application.ExeName) + '\JSON_PUT.LOG');
+
+  result := cUrl_Str;
 end;
 
 end.
